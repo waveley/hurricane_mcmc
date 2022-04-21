@@ -30,13 +30,16 @@ hurrican703.csv collected the track data of 703 hurricanes in  the North Atlanti
 
 ```{r eval=FALSE, include=TRUE}
 library(ggplot2)
-dt= read.csv("/Users/yw2148/Dropbox/Teaching/Teaching-computing/My Teaching Files/big data computing/1_ggplot/hurrican703.csv")
+dt= read.csv("./data/hurrican703.csv")
 ggplot(data=dt, aes(x = Longitude, y = Latitude)) + 
   stat_summary_2d(data = dt, aes(x = Longitude, y = Latitude, z = dt$Wind.kt), fun = median, binwidth = c(1, 1), show.legend = TRUE)
 library(data.table)
 dt <- as.data.table(dt)
 summary(dt)
 ```
+
+
+
 Overlay the hurrican data in the world map
 ```{r eval=FALSE, include=TRUE}
 library(maps)
@@ -65,6 +68,7 @@ seasonrange <- paste(range(dt[, Season]), collapse=" - ")
 map + ggtitle(paste("Atlantic named Windstorm Trajectories (", 
                      seasonrange, ")\n")) 
 ```
+
 Show hurricance tracks by month
 ```{r eval=FALSE, include=TRUE}
 mapMonth <- map + facet_wrap(~ Month) +
