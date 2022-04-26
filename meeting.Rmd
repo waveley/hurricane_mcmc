@@ -1,0 +1,16 @@
+---
+title: "meeting"
+author: "Paulina Han"
+date: '2022-04-21'
+output: html_document
+---
+
+meeting 4/21/2022
+
+Question1:
+  1. $\pi(\theta|Y) = f(Y|\theta)* \pi(\theta) = f(Yi(t+6)|Yi(t), \theta ) ^ {(t * n/6)} * \pi(\theta)$
+
+$$Y_{i}(t+6) \sim N(\beta_{0,i}+\beta_{1,i}Y_{i}(t) + \beta_{2,i}\Delta_{i,1}(t)+
+  \beta_{3,i}\Delta_{i,2}(t) +\beta_{4,i}\Delta_{i,3}(t), \sigma^2) $$ 
+  
+   f(Yi(t+6)|Yi(t),theta) ~ N( )
