@@ -92,12 +92,11 @@ $$
 \begin{aligned}
 \log P(\Theta \mid Y) & \propto \sum_{i=1}^{n} \sum_{t=0}^{t_{i(n)} - 6} \{ \log{(-\sqrt{2\pi}\sigma)} -\frac{1}{2\sigma^2} [Y_{i}(t+6) - \eta_{i}(t) ]^2\}
 \\ & + \sum_{i=1}^{n} \{-\frac{1}{2}(\boldsymbol{\beta}_i-\boldsymbol{\beta})^{\prime} \Sigma^{-1}(\boldsymbol{\beta}_i-\boldsymbol{\beta})\}
-\\ & - \log(\sigma^2) - (d+1)\log(|\boldsymbol \Sigma|) - \frac{1}{2}\boldsymbol \Sigma^{-1}
+\\ & - \log(\sigma^2) - (d+1)\log(|\boldsymbol \Sigma|) - \frac{1}{2} \text{trace} (\boldsymbol \Sigma^{-1})
 \end{aligned}
 $$
 
 
-**(Note: This formula is kind of weird since the last term is a matrix (sorry I'm kinda of inexperienced in dealing with matrices))**
 
 
 \vskip 10pt
