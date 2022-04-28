@@ -79,7 +79,7 @@ $$
 
 $$
 P(\Theta \mid Y) \propto f(Y | \Theta)P(\Theta) = f(Y \mid \boldsymbol B, \boldsymbol \beta, \sigma^2, \boldsymbol \Sigma) 
-f(\boldsymbol B \mid \boldsymbol \beta)P(\boldsymbol \beta) P(\sigma^2) P(\boldsymbol \Sigma^{-1})
+f(\boldsymbol B \mid \boldsymbol \beta, \boldsymbol \Sigma)P(\boldsymbol \beta) P(\sigma^2) P(\boldsymbol \Sigma^{-1})
 $$
 
 \vskip 10pt
