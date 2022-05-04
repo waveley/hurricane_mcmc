@@ -6,6 +6,10 @@
 
 set.seed(20220417)
 library(tidyverse)
+library(lubridate)
+library(extraDistr)
+library(MASS)
+
 
 # set knitr defaults
 knitr::opts_chunk$set(

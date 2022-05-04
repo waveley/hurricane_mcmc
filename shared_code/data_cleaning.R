@@ -15,7 +15,7 @@ correct.year = function(date) {
 
 raw = read_csv("data/hurrican703.csv") %>% 
   janitor::clean_names() %>% 
-  select(-nature, -season, -month) %>% 
+  dplyr::select(-nature, -season, -month) %>% 
   mutate(
     time = gsub("[()]", "", time),
     time = as.POSIXlt(parse_datetime(time, "%y-%m-%d %H:%M:%S")),
@@ -45,7 +45,7 @@ dt = dt %>%
     d_log = longitude...4 - longitude...9,
     d_wkt = wind_kt...5 - wind_kt...10
   ) %>% 
-  select(id = id...1, wkt_new = wind_kt...5, wkt_cur = wind_kt...10, d_lat, d_log, d_wkt)
+  dplyr::select(id = id...1, wkt_new = wind_kt...5, wkt_cur = wind_kt...10, d_lat, d_log, d_wkt)
 
 hc = distinct(dt, id) %>% add_rownames("i")
 
