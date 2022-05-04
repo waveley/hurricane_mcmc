@@ -178,7 +178,7 @@ B <- data.frame(matrix(1, nrow = 700, ncol = 5))
 
 
 sigmasq <- function(dat, B) {
-  alpha = nrow(dat)
+  alpha = nrow(dat)/2
   beta = beta_gamma(dat, B)
   sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
   return(sigmasq)
@@ -188,6 +188,9 @@ set.seed(2022)
 sigmasq(dt, B)
 ```
 
+```{r}
+
+```
 
 
 
