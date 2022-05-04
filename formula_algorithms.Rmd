@@ -8,6 +8,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(progress)
 ```
 
 
@@ -257,6 +258,7 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   SIGMAvec = list(SIGMA)
   
   for (k in 2:niter) {
+    pb1$tick()
     Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k-1]]), 1/sigmasqvec[k-1], muvec[[k-1]]) 
     muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k-1]])
     sigmasqvec[k] = sigmasqfun(y, Bvec[[k]])
@@ -267,7 +269,11 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
 }
 
-res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = 10, 
+iter <- 10
+pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
+                        total = iter - 1)
+
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = iter, 
          beta_i, mufun, sigmasq, SIGMAfun)
 ```
 

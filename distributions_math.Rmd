@@ -102,7 +102,9 @@ V^{-1} &= I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T
 \\
 \frac{1}{2}(n^* - p - 1) &= d + \frac{N}{2} + 1
 \\
-&\implies n^* = 3d + N + 2
+2d + N + 1 &= n^* - d - 1
+\\
+&\implies n^* = 3d + N + 3
 \end{aligned}
 $$
 Thus, $A = \Sigma^{-1} \sim \text{Wishart}\left(n^*, \,\, I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T\right)$
