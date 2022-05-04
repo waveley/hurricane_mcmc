@@ -30,7 +30,6 @@ beta_gamma <- function(dat, B) {
 B <- data.frame(matrix(1, nrow = 700, ncol = 5))
 #beta_gamma <- beta_gamma(dt, B)
 
-
 sigmasq <- function(dat, B) {
   alpha = nrow(dat)/2
   beta = beta_gamma(dat, B)
@@ -45,7 +44,7 @@ sigmasq(dt, B)
 ## Big B
 
 ```{r}
-#function calculating beta in inverse gamma distribution
+#function calculating beta in MVN
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
   res = rep(NA,5)
   newdat <- dat
