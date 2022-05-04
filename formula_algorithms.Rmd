@@ -162,17 +162,23 @@ head(dt)
 ## MCMC
 
 ```{r}
+library(foreach)
+library(doParallel)
+library(doRNG)
+
+numCores = detectCores()
+registerDoParallel(numCores - 1) 
+
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
-  res = NULL
-  for (j in 1:700) {
+  
+  res = foreach(j = 1:700, .combine = "+", .packages = c("tidyverse")) %dorng% {
     subdat = dat %>% filter(i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
-    res = rbind(res, beta)
   }
-  return(sum(res))
+  return(res)
 }
 
 #test function
@@ -189,20 +195,16 @@ sigmasq <- function(dat, B) {
 
 #function generating B
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
-  res = rep(NA,5)
   newdat <- dat
   
-  for (j in 1:700) {
-    j = 1
+  res = foreach(j = 1:700, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
     subdat = newdat %>% dplyr::filter(i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     I = diag(x = 1, nrow(subdat), nrow(subdat))
-    Vinv = solve(siginv + sigmasqinv*(t(x) %*% I %*% x))
+    Vinv = pinv(siginv + sigmasqinv*(t(x) %*% I %*% x))
     M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
-    betai = mvrnorm(1, Vinv %*% t(M), Vinv)
-    res = rbind(res, betai)
-    j = j+1
+    mvrnorm(1, Vinv %*% t(M), Vinv)
   }
   res = res %>% na.omit()
   
@@ -217,7 +219,7 @@ beta_i <- function(dat, siginv, sigmasqinv, mu) {
 # function generating mu
 mufun = function(B, SIGMA) {
   
-  N = length(B)
+  N = nrow(B)
   V = N * solve(SIGMA)
   M = solve(SIGMA) %*% colSums(B)
   
@@ -227,22 +229,22 @@ mufun = function(B, SIGMA) {
   
 }
 
-mufun(B, diag(1,5))
 
 #function generating SIGMA
 SIGMAfun = function(B, mu) {
   
-  N = length(B)
-  n = 17 + N
+  B = as.matrix(B)
+  N = nrow(B)
+  n = 18 + N
   S = 0
   for (i in 1:N) {
-    S = S + t(B[i,] - mu) * (B[i,] - mu)
+    S = S + t(B[i,] - mu) %*% (B[i,] - mu) %>% as.numeric()
   }
   S = diag(S,5) + diag(1,5)
   
   SIGMA = rWISHART(1, df=n, S=S)
   
-  return(SIGMA)
+  return(solve(SIGMA))
 }
 
 #Gibbs
@@ -265,9 +267,8 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
 }
 
-gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = 10, 
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = 10, 
          beta_i, mufun, sigmasq, SIGMAfun)
-
 ```
 
 
