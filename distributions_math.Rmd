@@ -1,0 +1,57 @@
+---
+title: "distributions_math"
+author: "Waveley Qiu (wq2162)"
+date: "2022-05-04"
+output: pdf_document
+---
+
+$$
+\begin{aligned}
+Y_i(t+6) &= \beta_{0i} + \beta_{1i}Y_i(t) + \beta_{2i}\Delta_{i1}(t) + \beta_{3i} \Delta_{i2}(t) + \beta_{4i} \Delta_{i3}(t) + \varepsilon_i(t)
+\\
+= \eta_i(t)
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+Y &= (Y_1, Y_2, ..., Y_n)
+\\
+\text{Let } \eta &= (\eta_1, \eta_2, ..., \eta_n), \text{ where } \eta_i = X_i\beta_i^T
+\\
+Y_i &\sim MVN(\eta_i, \sigma^2 I_{n_i})
+\\
+f(Y_i | B, \mu, \Sigma, \sigma^2) &= (2\pi)^{\frac{n_i}{2}} \left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}}\exp\left(-\frac{1}{2} \left(Y_i - X_i\beta_i^T\right)(\sigma^2I_{n_i})^{-1}(Y_i - X_i \beta_i^T)\right)
+\\
+L(Y|B, \beta, \Sigma, \sigma^2) &= \prod_{i = 1}^N f(Y_i | B, \beta, \Sigma, \sigma^2) 
+\\
+&= \prod_{i=1}^N(2\pi)^{-\frac{n_i}{2}} \left| \sigma^2I_{n_i} \right|^{-\frac{1}{2}}\exp(-\frac{1}{2}(Y_i - X_i \beta_i^T)^T ( \sigma^2 I_{n_i})^{-1}(Y_i - X_i \beta_i^T)^T)
+\\
+B &= (\beta_1^T, \beta_2^T, ..., \beta_n^T)^T
+\\
+\beta_i &\sim MVN(\mu, \Sigma)
+\\
+f(B | \beta, \Sigma) &= \prod_{i=1}^n (2 \pi)^{-\frac{5}{2}} \left| \sigma \right|^{-\frac{1}{2}} \exp\left( -\frac{1}{2} (\beta_i - \mu)^T \Sigma^{-1} (\beta_i - \mu)\right)
+\\
+f(\mu) & \propto 1
+\\
+f(\Sigma) & \propto \left| \Sigma\right|^{-(d+1)}\exp\left(-\frac{1}{2}\Sigma^{-1}\right), \text{ where } d = 5
+\\
+f(\sigma^2) &\propto \frac{1}{\sigma^2}
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+&\implies f(B, \mu, \Sigma, \sigma^2 | Y) \propto L(Y | B, \beta, \Sigma, \sigma^2) f(B, \beta, \Sigma, \sigma^2)
+\\
+&= L(Y | B, \beta, \Sigma, \sigma^2)f(B|\beta, \Sigma) f(\beta) f(\Sigma) f(\sigma^2)
+\\
+&= \prod_{i=1}^N (2\pi)^{\frac{n_i}{2}}\left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}}\exp\left(-\frac{1}{2}(Y_i - X_i\beta_i)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T)\right)|\Sigma|^{-\frac{n}{2}}
+\\ & \quad\quad\exp\left(-\frac{1}{2}(\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right) |\Sigma|^{-(d+1)}\exp(-\frac{1}{2}\Sigma^{-1})\frac{1}{\sigma^2}
+\\
+&= \prod_{i=1}^N \left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}} |\Sigma|^{-(d + \frac{n}{2} + 1)} \frac{1}{\sigma^2}\exp\left[-\frac{1}{2}\left[(Y_i - X_i \beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right]\right]\exp(-\frac{1}{2}\Sigma^{-1})
+\end{aligned}
+$$
