@@ -187,7 +187,7 @@ sigmasq <- function(dat, B) {
   return(sigmasq)
 }
 
-#function calculating beta in inverse gamma distribution
+#function generating B
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
   res = rep(NA,5)
   newdat <- dat
