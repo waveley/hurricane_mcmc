@@ -14,9 +14,10 @@ source("shared_code/data_cleaning.R")
 
 ```{r}
 #function calculating beta in inverse gamma distribution
-beta_gamma <- function(dat, B) {
+n_hur <- 700
+beta_gamma <- function(dat, B, nhur) {
   res = NULL
-  for (j in 1:700) {
+  for (j in 1:nhur) {
     subdat = dat %>% filter(i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
@@ -45,11 +46,12 @@ sigmasq(dt, B)
 
 ```{r}
 #function calculating beta in MVN
-beta_i <- function(dat, siginv, sigmasqinv, mu) {
+n_hur <- 700
+beta_i <- function(dat, siginv, sigmasqinv, mu, n_hur) {
   res = rep(NA,5)
   newdat <- dat
   
-  for (j in 1:700) {
+  for (j in 1:n_hur) {
     j = 1
     subdat = newdat %>% dplyr::filter(i == j)
     y = subdat[, 2]
