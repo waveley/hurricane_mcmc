@@ -1,6 +1,6 @@
 ---
 title: "coded_distributions"
-author: "Waveley Qiu (wq2162)"
+author: "Lin Yang, Yida Wang"
 date: "2022-05-04"
 output: pdf_document
 ---
