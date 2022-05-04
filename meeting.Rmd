@@ -14,3 +14,6 @@ $$Y_{i}(t+6) \sim N(\beta_{0,i}+\beta_{1,i}Y_{i}(t) + \beta_{2,i}\Delta_{i,1}(t)
   \beta_{3,i}\Delta_{i,2}(t) +\beta_{4,i}\Delta_{i,3}(t), \sigma^2) $$ 
   
    f(Yi(t+6)|Yi(t),theta) ~ N( )
+   
+   
+

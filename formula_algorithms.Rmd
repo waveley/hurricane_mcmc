@@ -109,6 +109,7 @@ $$
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(extraDistr)
 
 correct.year = function(date) {
   date$year = date$year - 100
@@ -156,6 +157,36 @@ dt = dt %>% left_join(hc)
 head(dt)
 ```
 
+## MCMC
+```{r}
+#function calculating beta in inverse gamma distribution
+beta_gamma <- function(dat, B) {
+  res = NULL
+  for (j in 1:700) {
+    subdat = dat %>% filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
+    res = rbind(res, beta)
+  }
+  return(sum(res))
+}
+
+#test function
+B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+#beta_gamma <- beta_gamma(dt, B)
+
+
+sigmasq <- function(dat, B) {
+  alpha = nrow(dat)
+  beta = beta_gamma(dat, B)
+  sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
+  return(sigmasq)
+}
+
+set.seed(2022)
+sigmasq(dt, B)
+```
 
 
 
