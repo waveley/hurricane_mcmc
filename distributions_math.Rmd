@@ -5,6 +5,8 @@ date: "2022-05-04"
 output: pdf_document
 ---
 
+## Full Posterior Distribution
+
 $$
 \begin{aligned}
 Y_i(t+6) &= \beta_{0i} + \beta_{1i}Y_i(t) + \beta_{2i}\Delta_{i1}(t) + \beta_{3i} \Delta_{i2}(t) + \beta_{4i} \Delta_{i3}(t) + \varepsilon_i(t)
@@ -12,7 +14,6 @@ Y_i(t+6) &= \beta_{0i} + \beta_{1i}Y_i(t) + \beta_{2i}\Delta_{i1}(t) + \beta_{3i
 = \eta_i(t)
 \end{aligned}
 $$
-
 
 $$
 \begin{aligned}
@@ -52,6 +53,76 @@ $$
 &= \prod_{i=1}^N (2\pi)^{\frac{n_i}{2}}\left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}}\exp\left(-\frac{1}{2}(Y_i - X_i\beta_i)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T)\right)|\Sigma|^{-\frac{n}{2}}
 \\ & \quad\quad\exp\left(-\frac{1}{2}(\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right) |\Sigma|^{-(d+1)}\exp(-\frac{1}{2}\Sigma^{-1})\frac{1}{\sigma^2}
 \\
-&= \prod_{i=1}^N \left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}} |\Sigma|^{-(d + \frac{n}{2} + 1)} \frac{1}{\sigma^2}\exp\left[-\frac{1}{2}\left[(Y_i - X_i \beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right]\right]\exp(-\frac{1}{2}\Sigma^{-1})
+&= \prod_{i=1}^N \left|\sigma^2I_{n_i}\right|^{-\frac{1}{2}} |\Sigma|^{-(d + \frac{n}{2} + 1)} \frac{1}{\sigma^2}\exp\left[-\frac{1}{2}\left[(Y_i - X_i \beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right]\right]\exp(-\frac{1}{2}\text{trace}(\Sigma^{-1}))
+\\
+&= \prod_{i=1}^N \sigma^{2n_i(-\frac{1}{2})} |\Sigma^{-1}|^{(d + \frac{N}{2} + 1)} {\sigma^{-2}}\exp\left[-\frac{1}{2}\left[(Y_i - X_i \beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T\Sigma^{-1}(\beta_i - \mu)\right]\right]\exp(-\frac{1}{2}\text{trace}(\Sigma^{-1}))
+\\
+&= \prod_{i=1}^N \sigma^{-n_i} |A|^{d + \frac{N}{2}+1}\sigma^{-2}\exp\left[-\frac{1}{2}\left[(Y_i - X_i \beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^TA(\beta_i - \mu)\right]\right]\exp(-\frac{1}{2}\text{trace}A)
+\\
+&= \sigma^{-\sum_{i=1}^Nn_i - 2}|A|^{d + \frac{N}{2}+1}\exp\left[-\frac{1}{2}\sum_{i=1}^N \left[(Y_i - X_i\beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T A(\beta_i - \mu)\right]\right] \exp\left[-\frac{1}{2} \text{trace}A\right]
 \end{aligned}
 $$
+
+## Conditional distribution of sigma^2
+
+$$
+\begin{aligned}
+f(\sigma^2 | B, \mu, \Sigma, Y) &\propto f(B, \mu, \Sigma, \sigma^2, Y) 
+\\
+&\propto \sigma^{-\sum_{i=1}^N n_i - 2}\exp\left[-\frac{1}{2\sigma^2}\sum_{i=1}^N \left[(Y_i - X_i\beta_i^T)^TI_{n_i}(Y_i - X_i\beta_i^T)\right]\right]
+\\
+&= \left(\sigma^{-2}\right)^{\frac{\sum_{i=1}^N n_i}{2} + 1} \exp\left[-\frac{1}{2}\sum_{i=1}^N\left[(Y_i - X_i \beta_i^T)^T(Y_i - X_i\beta_i^T)\right]\sigma^{-2}\right]
+\\
+&= \left(\frac{1}{\sigma^2}\right)^{\frac{\sum_{i=1}^N n_i}{2} + 1} \exp\left[-\frac{1}{2}\sum_{i=1}^N\sum_{t=1}^{n_i}\left[(y_{it} - x_{it} \beta_i^T)^2\right]\frac{1}{\sigma^2}\right]
+\end{aligned}
+$$
+
+Let $W = \sigma^2$. It follows:
+$$
+\begin{aligned}
+&\left(\frac{1}{\sigma^2}\right)^{\frac{\sum_{i=1}^N n_i}{2} + 1} \exp\left[-\frac{1}{2}\sum_{i=1}^N\left[(Y_i - X_i \beta_i^T)^T(Y_i - X_i\beta_i^T)\right]\frac{1}{\sigma^2}\right]
+\\
+&=\left(\frac{1}{W}\right)^{\frac{\sum_{i=1}^N n_i}{2} + 1} \exp\left[-\frac{1}{2}\sum_{i=1}^N\left[(Y_i - X_i \beta_i^T)^T(Y_i - X_i\beta_i^T)\right]\frac{1}{W}\right]
+\\
+&\implies W \sim \text{inverse Gamma}(\frac{\sum_{i=1}^N n_i}{2}, \frac{1}{2}\sum_{i=1}^N \sum_{t=1}^{n_i}(y_{it} - x_{it}\beta_i^T)^2)
+\end{aligned}
+$$
+
+## Conditional Distribution of Big Sigma
+
+$$
+\begin{aligned}
+f(\Sigma^{-1}|B, \mu, \sigma^2, Y) & \propto |A|^{d + \frac{N}{2} + 1} \exp\left[-\frac{1}{2}\sum_{i=1}^N (\beta_i - \mu)^T A (\beta_i - \mu)\right] \exp(-\frac{1}{2}\text{trace}A)
+\\
+&=  |A|^{d + \frac{N}{2} + 1} \exp\left[- \frac{1}{2}\text{trace}\left(A +\sum_{i=1}^N (\beta_i - \mu)^T A (\beta_i - \mu)\right)\right] 
+\\
+&=  |A|^{d + \frac{N}{2} + 1} \exp\left[- \frac{1}{2}\text{trace}\left(A \left( I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T\right)\right)\right] 
+\\
+V^{-1} &= I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T
+\\
+\frac{1}{2}(n^* - p - 1) &= d + \frac{N}{2} + 1
+\\
+&\implies n^* = 3d + N + 2
+\end{aligned}
+$$
+Thus, $A = \Sigma^{-1} \sim \text{Wishart}\left(n^*, \,\, I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T\right)$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
