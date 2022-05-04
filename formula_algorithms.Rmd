@@ -206,7 +206,7 @@ beta_i <- function(dat, siginv, sigmasqinv, mu) {
   }
   res = res %>% na.omit()
   
-  return(as.matrix(res))
+  return(as.data.frame(res))
 }
 
 #siginv <- matrix(1, nrow = 5, ncol = 5)
