@@ -111,6 +111,7 @@ library(tidyverse)
 library(lubridate)
 library(extraDistr)
 library(MASS)
+library(mixAK)
 
 correct.year = function(date) {
   date$year = date$year - 100
@@ -157,3 +158,116 @@ dt = dt %>% left_join(hc)
 
 head(dt)
 ```
+
+## MCMC
+
+```{r}
+#function calculating beta in inverse gamma distribution
+beta_gamma <- function(dat, B) {
+  res = NULL
+  for (j in 1:700) {
+    subdat = dat %>% filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
+    res = rbind(res, beta)
+  }
+  return(sum(res))
+}
+
+#test function
+B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+#beta_gamma <- beta_gamma(dt, B)
+
+
+sigmasq <- function(dat, B) {
+  alpha = nrow(dat)/2
+  beta = beta_gamma(dat, B)
+  sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
+  return(sigmasq)
+}
+
+#function calculating beta in inverse gamma distribution
+beta_i <- function(dat, siginv, sigmasqinv, mu) {
+  res = rep(NA,5)
+  newdat <- dat
+  
+  for (j in 1:700) {
+    j = 1
+    subdat = newdat %>% dplyr::filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    I = diag(x = 1, nrow(subdat), nrow(subdat))
+    Vinv = solve(siginv + sigmasqinv*(t(x) %*% I %*% x))
+    M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
+    betai = mvrnorm(1, Vinv %*% t(M), Vinv)
+    res = rbind(res, betai)
+    j = j+1
+  }
+  res = res %>% na.omit()
+  
+  return(as.matrix(res))
+}
+
+#siginv <- matrix(1, nrow = 5, ncol = 5)
+#sigmasqinv = 0.2
+#mu <- c(1,1,1,1,1)
+#beta_i(dt, siginv, sigmasqinv, mu)
+
+# function generating mu
+mufun = function(B, SIGMA) {
+  
+  N = length(B)
+  V = N * solve(SIGMA)
+  M = solve(SIGMA) %*% colSums(B)
+  
+  mu = mvrnorm(mu = solve(V) %*% M, Sigma = solve(V))
+  
+  return(mu)
+  
+}
+
+mufun(B, diag(1,5))
+
+#function generating SIGMA
+SIGMAfun = function(B, mu) {
+  
+  N = length(B)
+  n = 17 + N
+  S = 0
+  for (i in 1:N) {
+    S = S + t(B[i,] - mu) * (B[i,] - mu)
+  }
+  S = diag(S,5) + diag(1,5)
+  
+  SIGMA = rWISHART(1, df=n, S=S)
+  
+  return(SIGMA)
+}
+
+#Gibbs
+gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfun, SIGMAfun) {
+  
+  Bvec = list(B)
+  muvec = list(mu)
+  sigmasqvec = rep(NA, niter)
+  sigmasqvec[1] = sigmasq
+  SIGMAvec = list(SIGMA)
+  
+  for (k in 2:niter) {
+    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k-1]]), 1/sigmasqvec[k-1], muvec[[k-1]]) 
+    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k-1]])
+    sigmasqvec[k] = sigmasqfun(y, Bvec[[k]])
+    SIGMAvec[[k]] = SIGMAfun(Bvec[[k]], muvec[[k]])
+  }
+  
+  return(list(B = Bvec, mu = muvec, sigmasq = sigmasqvec, SIGMA = SIGMAvec))
+  
+}
+
+gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = 10, 
+         beta_i, mufun, sigmasq, SIGMAfun)
+
+```
+
+
