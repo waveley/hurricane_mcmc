@@ -110,6 +110,7 @@ $$
 library(tidyverse)
 library(lubridate)
 library(extraDistr)
+library(MASS)
 
 correct.year = function(date) {
   date$year = date$year - 100
@@ -118,7 +119,7 @@ correct.year = function(date) {
 
 raw = read_csv("data/hurrican703.csv") %>% 
   janitor::clean_names() %>% 
-  select(-nature, -season, -month) %>% 
+  dplyr::select(-nature, -season, -month) %>% 
   mutate(
     time = gsub("[()]", "", time),
     time = as.POSIXlt(parse_datetime(time, "%y-%m-%d %H:%M:%S")),
@@ -148,7 +149,7 @@ dt = dt %>%
     d_log = longitude...4 - longitude...9,
     d_wkt = wind_kt...5 - wind_kt...10
   ) %>% 
-  select(id = id...1, wkt_new = wind_kt...5, wkt_cur = wind_kt...10, d_lat, d_log, d_wkt)
+  dplyr::select(id = id...1, wkt_new = wind_kt...5, wkt_cur = wind_kt...10, d_lat, d_log, d_wkt)
 
 hc = distinct(dt, id) %>% add_rownames("i")
 
@@ -189,7 +190,30 @@ sigmasq(dt, B)
 ```
 
 ```{r}
+#function calculating beta in inverse gamma distribution
+beta_i <- function(dat, siginv, sigmasqinv, mu) {
+  res = rep(NA,5)
+  newdat <- dat
+  
+  for (j in 1:700) {
+    j = 1
+    subdat = newdat %>% dplyr::filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    I = diag(x = 1, nrow(subdat), nrow(subdat))
+    Vinv = solve(siginv + sigmasqinv*(t(x) %*% I %*% x))
+    M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
+    betai = mvrnorm(1, Vinv %*% t(M), Vinv)
+    res = rbind(res, betai)
+    j = j+1
+  }
+  return(res)
+}
 
+siginv <- matrix(1, nrow = 5, ncol = 5)
+sigmasqinv = 0.2
+mu <- c(1,1,1,1,1)
+aa <- beta_i(dt, siginv, sigmasqinv, mu) %>% na.omit()
 ```
 
 
