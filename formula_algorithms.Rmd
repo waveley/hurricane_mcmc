@@ -163,6 +163,7 @@ head(dt)
 ## MCMC
 
 ```{r}
+set.seed(20220504)
 library(foreach)
 library(doParallel)
 library(doRNG)
@@ -275,6 +276,8 @@ pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
 
 res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = iter, 
          beta_i, mufun, sigmasq, SIGMAfun)
+
+save(res, file = "mcmc1.RData")
 ```
 
 
