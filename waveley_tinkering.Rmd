@@ -1,0 +1,45 @@
+---
+title: "Untitled"
+author: "Waveley Qiu (wq2162)"
+date: "5/4/2022"
+output: pdf_document
+---
+
+```{r}
+source("shared_code/setup.R")
+source("shared_code/data_cleaning.R")
+library(mixAK)
+library(tidyverse)
+```
+
+## Putting all estimates together
+
+```{r}
+source("shared_code/load_mcmc.R")
+
+res_list$B
+mat <- matrix(NA, nrow = 700, ncol = 5)
+
+library(progress)
+
+pb2 <- progress_bar$new(format = "calculating mean... [:bar] :percent eta: :eta",
+                        total = 700)
+for (j in 1:700){
+  pb2$tick()
+  for (k in 1:5){
+    cur_sum <- 0
+    for (i in 1:length(res_list$B)){
+      cur_sum = sum(cur_sum, res_list$B[[i]][j,k])
+    }
+    cur_mean = cur_sum/length(res_list$B)
+    mat[j,k] <- cur_mean
+  }
+}
+```
+
+## Problem 4
+
+```{r}
+
+```
+
