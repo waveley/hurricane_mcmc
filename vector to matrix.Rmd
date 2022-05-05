@@ -1,0 +1,15 @@
+---
+title: "vector to matrxi"
+author: "Paulina Han"
+date: '2022-04-28'
+output: html_document
+---
+
+ for sigma
+```{r}
+a = 1:15
+x = matrix(rep(0, 25), 5, 5)
+x[lower.tri(x, diag = T)] = a
+Matrix::forceSymmetric(x,uplo="L")
+```
+
