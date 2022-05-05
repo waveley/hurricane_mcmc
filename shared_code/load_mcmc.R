@@ -16,4 +16,4 @@ mu_list <- c(res1[[2]], res2[[2]], res3[[2]], res4[[2]], res5[[2]])
 sigmasq_list <- c(res1[[3]], res2[[3]], res3[[3]], res4[[3]], res5[[3]])
 big_sigma_list <- c(res1[[4]], res2[[4]], res3[[4]], res4[[4]], res5[[4]])
 
-res_list <- list(B_list, mu_list, sigmasq_list, big_sigma_list)
+res_list <- list(B = B_list, mu = mu_list, sigmasq = sigmasq_list, big_sigma = big_sigma_list)
