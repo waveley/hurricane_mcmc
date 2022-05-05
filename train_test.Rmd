@@ -12,12 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Data Preparation
 
 ```{r}
-library(tidyverse)
-library(lubridate)
-library(extraDistr)
-library(MASS)
-library(mixAK)
-
 source("shared_code/data_cleaning.R")
 load("B_final.RData")
 
@@ -29,15 +23,6 @@ dt %>% group_by(i) %>% slice(1) %>% arrange(as.numeric(i))
 ```
 
 ```{r}
-res = c()
-for (i in 1:700) {
-  res = rbind(res, c(0, 1, 0, 0, 1))
-}
-
-
-B = matrix(res, ncol = 5)
-
-
 my.predict = function(B, newdata) {
   res = c()
   
