@@ -79,3 +79,18 @@ train = dt[train_index,]
 test = dt[-train_index,]
 
 #head(dt)
+
+
+dt_for5 = dt %>% 
+  group_by(i) %>% 
+  slice(1) %>% 
+  arrange(as.numeric(i)) %>% 
+  mutate(
+    season = ifelse(month %in% c(12, 1, 2), "winter", 
+             ifelse(month %in% c(3, 4, 5), "spring",
+             ifelse(month %in% c(6, 7, 8), "summer", "fall")))
+  )
+
+
+dt_for5
+
