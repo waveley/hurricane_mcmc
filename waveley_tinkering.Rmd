@@ -17,12 +17,12 @@ library(tidyverse)
 ```{r}
 source("shared_code/load_mcmc.R")
 
-res_list$B
-mat <- matrix(NA, nrow = 700, ncol = 5)
+mat_B <- matrix(NA, nrow = 700, ncol = 5)
 
 library(progress)
 
-pb2 <- progress_bar$new(format = "calculating mean... [:bar] :percent eta: :eta",
+# calculating B mean
+pb2 <- progress_bar$new(format = "calculating B mean... [:bar] :percent eta: :eta",
                         total = 700)
 for (j in 1:700){
   pb2$tick()
@@ -32,9 +32,62 @@ for (j in 1:700){
       cur_sum = sum(cur_sum, res_list$B[[i]][j,k])
     }
     cur_mean = cur_sum/length(res_list$B)
-    mat[j,k] <- cur_mean
+    mat_B[j,k] <- cur_mean
   }
 }
+
+B_final <- mat_B
+
+save(B_final, file = "B_final.RData")
+
+# calculating mu mean
+
+pb3 <- progress_bar$new(format = "calculating mu mean... [:bar] :percent eta: :eta",
+                        total = 5)
+
+mat_mu <- matrix(NA, nrow = 1, ncol = 5)
+
+for (k in 1:5){
+  pb3$tick()
+  cur_sum <- 0
+  for (i in 1:length(res_list$mu)){
+    cur_sum = sum(cur_sum, res_list$mu[[i]][k])
+  }
+  cur_mean = cur_sum/length(res_list$mu)
+  mat_mu[k] <- cur_mean
+}
+
+mu_final <- mat_mu
+
+save(mu_final, file = "mu_final.RData")
+
+# calculating big_sigma mean
+
+pb4 <- progress_bar$new(format = "calculating mu mean... [:bar] :percent eta: :eta",
+                        total = 5)
+
+mat_big_sigma <- matrix(NA, nrow = 5, ncol = 5)
+
+for (j in 1:5){
+  pb4$tick()
+  for (k in 1:5){
+    cur_sum <- 0
+    for (i in 1:length(res_list$big_sigma)){
+      cur_sum = sum(cur_sum, res_list$big_sigma[[i]][j,k])
+    }
+    cur_mean = cur_sum/length(res_list$big_sigma)
+    mat_big_sigma[j,k] <- cur_mean
+  }
+}
+
+big_sigma_final <- mat_big_sigma
+save(big_sigma_final, file = "sigmasq_final.RData")
+
+
+# calculating sigmasq mean
+
+sigmasq_final <- mean(res_list$sigmasq)
+save(sigmasq_final, file = "sigmasq_final.RData")
 ```
 
 ## Problem 4
