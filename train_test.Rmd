@@ -1,0 +1,30 @@
+---
+title: "train test"
+author: "Haolin Zhong"
+date: "2022/5/5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## train / test
+
+Here we use stratified sampling to sample 80% of data for each hurricane as train data, and use the rest 20% as test data.
+
+```{r}
+library(tidyverse)
+
+set.seed(2022)
+train_index = rownames_to_column(dt) %>% 
+  group_by(i) %>% 
+  sample_frac(0.8) %>% 
+  pull(rowname) %>% 
+  as.numeric()
+
+train = dt[train_index,]
+test = dt[-train_index,]
+
+test
+```
