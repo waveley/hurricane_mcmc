@@ -163,13 +163,12 @@ head(dt)
 ## MCMC
 
 ```{r}
-set.seed(20220504)
 library(foreach)
 library(doParallel)
 library(doRNG)
 
 numCores = detectCores()
-registerDoParallel(numCores - 1) 
+registerDoParallel(numCores) 
 
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
@@ -182,11 +181,6 @@ beta_gamma <- function(dat, B) {
   }
   return(res)
 }
-
-#test function
-B <- data.frame(matrix(1, nrow = 700, ncol = 5))
-#beta_gamma <- beta_gamma(dt, B)
-
 
 sigmasq <- function(dat, B) {
   alpha = nrow(dat)/2
@@ -231,7 +225,6 @@ mufun = function(B, SIGMA) {
   
 }
 
-
 #function generating SIGMA
 SIGMAfun = function(B, mu) {
   
@@ -270,14 +263,43 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
 }
 
-iter <- 10
+
+B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+
+#run 1
+iter <- 10000
+set.seed(20220504)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
-res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 5, SIGMA = diag(1,5), niter = iter, 
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter, 
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res, file = "mcmc1.RData")
+
+#test
+testB = res$B[[10000]]
+res$mu[[10000]]
+res$sigmasq[[10000]]
+res$SIGMA[[10000]]
+
+mean(testB[1:300,1])
+mean(testB[300:400,1])
+sum(testB[,1] > 0.00001)
+
+#332, 338, 342, 550, 588, 612, 657, 694
+
+#run2
+set.seed(20220505)
+pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
+                        total = iter - 1)
+
+res2 = gibbsfun(dt, testB, testmu, testsigmasq, testSIGMA, niter = iter, 
+         beta_i, mufun, sigmasq, SIGMAfun)
+
+save(res2, file = "mcmc2.RData")
+
+res2$mu[[10000]]
 ```
 
 
