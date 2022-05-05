@@ -1,20 +1,12 @@
----
-title: "Untitled"
-author: "Waveley Qiu (wq2162)"
-date: "5/4/2022"
-output: pdf_document
----
+#############
+#
+# Parameter Estimates from MCMC
+# 
+# Will be saved in RData files
+#
+#############
 
-```{r}
-source("shared_code/setup.R")
-source("shared_code/data_cleaning.R")
-library(mixAK)
-library(tidyverse)
-```
 
-## Putting all estimates together
-
-```{r}
 source("shared_code/load_mcmc.R")
 
 mat_B <- matrix(NA, nrow = 700, ncol = 5)
@@ -88,4 +80,3 @@ save(big_sigma_final, file = "big_sigma_final.RData")
 
 sigmasq_final <- mean(res_list$sigmasq)
 save(sigmasq_final, file = "sigmasq_final.RData")
-```
