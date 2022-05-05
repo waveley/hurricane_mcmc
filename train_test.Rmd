@@ -28,3 +28,22 @@ test = dt[-train_index,]
 
 test
 ```
+
+
+```{r}
+B = matrix(rep(1, 5*700), nrow = 700)
+
+my.predict = function(B, newdata) {
+  res = data.frame()
+  hrcans = newdata %>% pull(i) %>% as.numeric() %>% unique()
+  for (i in hrcans) {
+    x = as.matrix(cbind(intercept = 1, test[test[,"i"] == i,][,3:6]))
+    pred = as.data.frame(t(B[i,] %*% t(x)))
+    res = rbind(res, c(pred))
+  }
+  return(res)
+}
+
+my.predict(B, test)
+```
+
