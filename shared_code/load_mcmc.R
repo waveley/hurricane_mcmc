@@ -10,7 +10,6 @@ load("mcmc_split3.RData")
 load("mcmc_split4.RData")
 load("mcmc_split5.RData")
 
-
 B_list <- c(res1[[1]], res2[[1]], res3[[1]], res4[[1]], res5[[1]])
 mu_list <- c(res1[[2]], res2[[2]], res3[[2]], res4[[2]], res5[[2]])
 sigmasq_list <- c(res1[[3]], res2[[3]], res3[[3]], res4[[3]], res5[[3]])
