@@ -1,0 +1,194 @@
+---
+title: "Gibbs_sampling"
+author: "Jibei Zheng"
+date: "2022/5/5"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(extraDistr)
+library(MASS)
+library(mixAK)
+library(progress)
+library(foreach)
+library(doParallel)
+library(doRNG)
+```
+
+```{r}
+source("shared_code/data_cleaning.R")
+dt = train
+
+numCores = detectCores()
+registerDoParallel(numCores) 
+
+#function calculating beta in inverse gamma distribution
+beta_gamma <- function(dat, B) {
+  
+  res = foreach(j = 1:700, .combine = "+", .packages = c("tidyverse")) %dorng% {
+    subdat = dat %>% filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
+  }
+  return(res)
+}
+
+sigmasq <- function(dat, B) {
+  alpha = nrow(dat)/2
+  beta = beta_gamma(dat, B)
+  sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
+  return(sigmasq)
+}
+
+#function generating B
+beta_i <- function(dat, siginv, sigmasqinv, mu) {
+  newdat <- dat
+  
+  res = foreach(j = 1:700, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
+    subdat = newdat %>% dplyr::filter(i == j)
+    y = subdat[, 2]
+    x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
+    I = diag(x = 1, nrow(subdat), nrow(subdat))
+    Vinv = pinv(siginv + sigmasqinv*(t(x) %*% I %*% x))
+    M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
+    mvrnorm(1, Vinv %*% t(M), Vinv)
+  }
+  res = res %>% na.omit()
+  
+  return(as.data.frame(res))
+}
+
+#siginv <- matrix(1, nrow = 5, ncol = 5)
+#sigmasqinv = 0.2
+#mu <- c(1,1,1,1,1)
+#beta_i(dt, siginv, sigmasqinv, mu)
+
+# function generating mu
+mufun = function(B, SIGMA) {
+  
+  N = nrow(B)
+  V = N * solve(SIGMA)
+  M = solve(SIGMA) %*% colSums(B)
+  
+  mu = mvrnorm(mu = solve(V) %*% M, Sigma = solve(V))
+  
+  return(mu)
+  
+}
+
+#function generating SIGMA
+SIGMAfun = function(B, mu) {
+  
+  B = as.matrix(B)
+  N = nrow(B)
+  n = 18 + N
+  S = 0
+  for (i in 1:N) {
+    S = S + t(B[i,] - mu) %*% (B[i,] - mu) %>% as.numeric()
+  }
+  S = diag(S,5) + diag(1,5)
+  
+  SIGMA = rWISHART(1, df=n, S=S)
+  
+  return(solve(SIGMA))
+}
+
+#Gibbs
+gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfun, SIGMAfun) {
+  
+  Bvec = list(B)
+  muvec = list(mu)
+  sigmasqvec = rep(NA, niter)
+  sigmasqvec[1] = sigmasq
+  SIGMAvec = list(SIGMA)
+  
+  for (k in 2:niter) {
+    pb1$tick()
+    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k-1]]), 1/sigmasqvec[k-1], muvec[[k-1]]) 
+    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k-1]])
+    sigmasqvec[k] = sigmasqfun(y, Bvec[[k]])
+    SIGMAvec[[k]] = SIGMAfun(Bvec[[k]], muvec[[k]])
+  }
+  
+  return(list(B = Bvec, mu = muvec, sigmasq = sigmasqvec, SIGMA = SIGMAvec))
+  
+}
+
+
+B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+
+#run 1
+iter <- 10000
+set.seed(20220504)
+pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
+                        total = iter - 1)
+
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter, 
+         beta_i, mufun, sigmasq, SIGMAfun)
+
+save(res, file = "mcmc1.RData")
+
+res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
+
+split_res <- list()
+cur_start <- 1
+nsplits <- 5
+nchain <- 10000
+for(i in 1:nsplits){
+  cur_end <- i*nchain/nsplits
+  split_res[[i]] <- list(res$B[cur_start:cur_end], 
+                       res$mu[cur_start:cur_end], 
+                       res$sigmasq[cur_start:cur_end], 
+                       res$SIGMA[cur_start:cur_end])
+  cur_start <- cur_start + (nchain/nsplits)
+}
+
+res1 <- split_res[[1]]
+res2 <- split_res[[2]]
+res3 <- split_res[[3]]
+res4 <- split_res[[4]]
+res5 <- split_res[[5]]
+
+save(res1, file = "mcmc_split1.RData")
+save(res2, file = "mcmc_split2.RData")
+save(res3, file = "mcmc_split3.RData")
+save(res4, file = "mcmc_split4.RData")
+save(res5, file = "mcmc_split5.RData")
+
+#test
+testB = res$B[[10000]]
+testmu = res$mu[[10000]]
+testsigmasq = res$sigmasq[[10000]]
+testSIGMA = res$SIGMA[[10000]]
+
+mean(testB[300:400,1])
+mean(testB[300:400,1])
+sum(testB[,1] > 0.00001)
+
+cur_vec <- NA
+for(i in 100:2000){
+  cur_vec <- c(cur_vec, res$B[[i]][1,1])
+}
+cur_vec[-1] %>% acf()
+
+unlist(resB)
+
+#332, 338, 342, 550, 588, 612, 657, 694
+
+#run2
+set.seed(20220505)
+pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
+                        total = iter - 1)
+
+res2 = gibbsfun(dt, testB, testmu, testsigmasq, testSIGMA, niter = iter, 
+         beta_i, mufun, sigmasq, SIGMAfun)
+
+save(res2, file = "mcmc2.RData")
+
+res2$mu[[10000]]
+```
+
