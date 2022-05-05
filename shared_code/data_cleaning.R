@@ -68,4 +68,14 @@ delete_id = dt %>%
 dt = dt %>% 
   filter(!(i %in% delete_id$i))
 
+set.seed(2022)
+train_index = rownames_to_column(dt) %>% 
+  group_by(i) %>% 
+  sample_frac(0.8) %>% 
+  pull(rowname) %>% 
+  as.numeric()
+
+train = dt[train_index,]
+test = dt[-train_index,]
+
 #head(dt)
