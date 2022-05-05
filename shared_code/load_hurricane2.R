@@ -1,2 +1,2 @@
 library(tidyverse)
-df_outcome = read.csv("hurricanoutcome2.csv")
+df_outcome = read.csv("data/hurricanoutcome2.csv")
