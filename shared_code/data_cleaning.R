@@ -38,7 +38,7 @@ dt = bind_cols(rbind(raw, placeholder),
 
 dt = dt[2:(nrow(dt)-1),]
 
-dt
+#dt
 
 dt = dt %>% 
   filter(id...1 == id...9,
@@ -54,11 +54,11 @@ dt = dt %>%
 
 hc = distinct(dt, id) %>% add_rownames("i")
 
-hc
+#hc
 
 dt = dt %>% left_join(hc)
 
-head(dt)
+#head(dt)
 
 delete_id = dt %>% 
   group_by(i) %>% 
@@ -68,4 +68,27 @@ delete_id = dt %>%
 dt = dt %>% 
   filter(!(i %in% delete_id$i))
 
+set.seed(2022)
+train_index = rownames_to_column(dt) %>% 
+  group_by(i) %>% 
+  sample_frac(0.8) %>% 
+  pull(rowname) %>% 
+  as.numeric()
+
+train = dt[train_index,]
+test = dt[-train_index,]
+
 #head(dt)
+
+dt_for5 = dt %>% 
+  group_by(i) %>% 
+  slice(1) %>% 
+  arrange(as.numeric(i)) %>% 
+  mutate(
+    season = ifelse(month %in% c(12, 1, 2), "winter", 
+             ifelse(month %in% c(3, 4, 5), "spring",
+             ifelse(month %in% c(6, 7, 8), "summer", "fall")))
+  )
+
+
+#dt_for5
