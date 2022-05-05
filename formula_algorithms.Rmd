@@ -276,16 +276,52 @@ res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = ite
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res, file = "mcmc1.RData")
+res
+
+res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
+
+split_res <- list()
+cur_start <- 1
+nsplits <- 5
+nchain <- 10000
+for(i in 1:nsplits){
+  cur_end <- i*nchain/nsplits
+  split_res[[i]] <- list(res$B[cur_start:cur_end], 
+                       res$mu[cur_start:cur_end], 
+                       res$sigmasq[cur_start:cur_end], 
+                       res$SIGMA[cur_start:cur_end])
+  cur_start <- cur_start + (nchain/nsplits)
+}
+
+res1 <- split_res[[1]]
+res2 <- split_res[[2]]
+res3 <- split_res[[3]]
+res4 <- split_res[[4]]
+res5 <- split_res[[5]]
+
+save(res1, file = "mcmc_split1.RData")
+save(res2, file = "mcmc_split2.RData")
+save(res3, file = "mcmc_split3.RData")
+save(res4, file = "mcmc_split4.RData")
+save(res5, file = "mcmc_split5.RData")
 
 #test
 testB = res$B[[10000]]
-res$mu[[10000]]
-res$sigmasq[[10000]]
-res$SIGMA[[10000]]
+testmu = res$mu[[10000]]
+testsigmasq = res$sigmasq[[10000]]
+testSIGMA = res$SIGMA[[10000]]
 
-mean(testB[1:300,1])
+mean(testB[300:400,1])
 mean(testB[300:400,1])
 sum(testB[,1] > 0.00001)
+
+cur_vec <- NA
+for(i in 100:2000){
+  cur_vec <- c(cur_vec, res$B[[i]][1,1])
+}
+cur_vec[-1] %>% acf()
+
+unlist(resB)
 
 #332, 338, 342, 550, 588, 612, 657, 694
 
