@@ -51,4 +51,12 @@ hc = distinct(dt, id) %>% add_rownames("i")
 
 dt = dt %>% left_join(hc)
 
+delete_id = dt %>% 
+  group_by(i) %>% 
+  summarize(n = n()) %>%
+  filter(n <= 5)
+
+dt = dt %>% 
+  filter(!(i %in% delete_id$i))
+
 #head(dt)
