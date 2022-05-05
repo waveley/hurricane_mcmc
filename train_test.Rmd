@@ -19,7 +19,7 @@ library(MASS)
 library(mixAK)
 
 
-raw = read_csv("hurricane_mcmc/data/hurrican703.csv") %>% 
+raw = read_csv("data/hurrican703.csv") %>% 
   janitor::clean_names() %>% 
   dplyr::select(-month) %>% 
   mutate(
@@ -71,6 +71,7 @@ dt = dt %>% left_join(hc)
 head(dt)
 ```
 
+
 ## for problem 5
 
 ```{r}
@@ -99,25 +100,35 @@ test
 
 
 ```{r}
-B = matrix(rep(1, 5*700), nrow = 700)
-
-my.predict = function(B, newdata) {
-  res = data.frame()
-  hrcans = newdata %>% pull(i) %>% as.numeric() %>% unique()
-  for (i in hrcans) {
-    x = as.matrix(cbind(intercept = 1, test[test[,"i"] == i,][,3:6]))
-    pred = as.data.frame(t(B[i,] %*% t(x)))
-    res = rbind(res, c(pred))
-  }
-  return(res$V1)
+res = c()
+for (i in 1:700) {
+  res = rbind(res, c(0, 1, 0, 0, 1))
 }
 
+
+B = matrix(res, ncol = 5)
+
+
+my.predict = function(B, newdata) {
+  res = c()
+  
+  for (j in 1:nrow(newdata)) {
+    i = newdata[j,] %>% pull(i) %>% as.numeric()
+    x = c(1, as.matrix(test[j, 3:6]))
+    pred = sum(B[i,] * x)
+    res = c(res, pred)
+  }
+  return(res)
+}
 ```
 
 
 ```{r}
 library(ModelMetrics)
-rmse(pred, test$wkt_new)
+pred = my.predict(B, test)
+rmse(test$wkt_new, pred)
 ```
+
+
 
 
