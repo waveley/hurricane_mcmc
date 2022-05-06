@@ -16,20 +16,32 @@ library(progress)
 library(foreach)
 library(doParallel)
 library(doRNG)
+library(pracma)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+numCores = detectCores()
+registerDoParallel(numCores) 
 ```
+
 
 ```{r}
 source("shared_code/data_cleaning.R")
 dt = train
 
-numCores = detectCores()
-registerDoParallel(numCores) 
+temp = distinct(dt, i) %>% add_rownames("new_i")
+dt = dt %>% left_join(temp)
 
+```
+
+functions:
+
+```{r}
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
   
-  res = foreach(j = 1:700, .combine = "+", .packages = c("tidyverse")) %dorng% {
-    subdat = dat %>% filter(i == j)
+  res = foreach(j = 1:684, .combine = "+", .packages = c("tidyverse")) %dopar% {
+    subdat = dat %>% filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
@@ -40,7 +52,7 @@ beta_gamma <- function(dat, B) {
 sigmasq <- function(dat, B) {
   alpha = nrow(dat)/2
   beta = beta_gamma(dat, B)
-  sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
+  sigmasq = extraDistr::rinvgamma(1, alpha = alpha, beta = beta) 
   return(sigmasq)
 }
 
@@ -48,13 +60,13 @@ sigmasq <- function(dat, B) {
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
   newdat <- dat
   
-  res = foreach(j = 1:700, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
-    subdat = newdat %>% dplyr::filter(i == j)
+  res = foreach(j = 1:684, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
+    subdat = newdat %>% dplyr::filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     I = diag(x = 1, nrow(subdat), nrow(subdat))
     Vinv = pinv(siginv + sigmasqinv*(t(x) %*% I %*% x))
-    M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
+    M = sigmasqinv*(t(y) %*% I %*% x) + t(mu) %*% siginv
     mvrnorm(1, Vinv %*% t(M), Vinv)
   }
   res = res %>% na.omit()
@@ -80,22 +92,32 @@ mufun = function(B, SIGMA) {
   
 }
 
+#mufun(testB, testSIGMA)
+#colSums(testB)/684
+#mm = solve(684 * solve(testSIGMA)) %*% (solve(testSIGMA) %*% colSums(testB))
+#mvrnorm(mu = mm, Sigma = diag(1e-19,5))
+#mvrnorm(mu = mm, Sigma = diag(1e-5,5))
+
+
 #function generating SIGMA
 SIGMAfun = function(B, mu) {
   
   B = as.matrix(B)
   N = nrow(B)
   n = 18 + N
-  S = 0
+  S = diag(0,5)
   for (i in 1:N) {
-    S = S + t(B[i,] - mu) %*% (B[i,] - mu) %>% as.numeric()
+    S = S + (B[i,] - mu) %*% t(B[i,] - mu)
   }
-  S = diag(S,5) + diag(1,5)
+  S = S + diag(1,5)
+  Sinv = solve(S)
   
-  SIGMA = rWISHART(1, df=n, S=S)
+  SIGMA = rWISHART(1, df=n, S=Sinv)
   
   return(solve(SIGMA))
 }
+
+#SIGMAfun(testB, mm)
 
 #Gibbs
 gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfun, SIGMAfun) {
@@ -108,8 +130,8 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
   for (k in 2:niter) {
     pb1$tick()
-    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k-1]]), 1/sigmasqvec[k-1], muvec[[k-1]]) 
-    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k-1]])
+    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k - 1]]), 1/sigmasqvec[k - 1], muvec[[k - 1]]) 
+    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k - 1]])
     sigmasqvec[k] = sigmasqfun(y, Bvec[[k]])
     SIGMAvec[[k]] = SIGMAfun(Bvec[[k]], muvec[[k]])
   }
@@ -118,27 +140,85 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
 }
 
+```
 
-B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+
+
+```{r}
+B <- data.frame(matrix(1, nrow = 684, ncol = 5))
 
 #run 1
-iter <- 10000
-set.seed(20220504)
+iter1 <- 100
+set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
-res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter, 
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter1, 
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res, file = "mcmc1.RData")
 
+
+#test
+testB = res$B[[10000]]
+testmu = res$mu[[10000]]
+testsigmasq = res$sigmasq[[10000]]
+testSIGMA = res$SIGMA[[10000]]
+
+mean(testB[1:642,1])
+sum(testB[,1] > 0.00001)
+
+#660(643)
+```
+
+plots:
+
+```{r}
+burn = 5000 
+
+#beta
+cur_B <- NA
+for (i in burn:10000) {
+  cur_B[i-burn+1] = res$B[[i]][233,1]
+}
+
+cur_B %>% acf()
+cur_B %>% ts.plot()
+data.frame(cur_B) %>% ggplot(aes(x = cur_B)) + geom_histogram(bins = 50)
+
+#mu
+cur_mu <- NA
+for (i in burn:10000) {
+  cur_mu[i-burn+1] = res$mu[[i]][1]
+}
+
+cur_mu %>% acf()
+cur_mu %>% ts.plot()
+data.frame(cur_mu) %>% ggplot(aes(x = cur_mu)) + geom_histogram(bins = 50)
+
+#sigmasq
+cur_s <- NA
+for (i in burn:10000) {
+  cur_s[i-burn+1] <- res$sigmasq[i]
+}
+
+cur_s %>% acf()
+cur_s %>% ts.plot()
+data.frame(cur_s) %>% ggplot(aes(x = cur_s)) + geom_histogram(bins = 50)
+
+#SIGMA
+```
+
+rdata split
+
+```{r}
 res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
 
 split_res <- list()
 cur_start <- 1
 nsplits <- 5
 nchain <- 10000
-for(i in 1:nsplits){
+for (i in 1:nsplits) {
   cur_end <- i*nchain/nsplits
   split_res[[i]] <- list(res$B[cur_start:cur_end], 
                        res$mu[cur_start:cur_end], 
@@ -159,36 +239,25 @@ save(res3, file = "mcmc_split3.RData")
 save(res4, file = "mcmc_split4.RData")
 save(res5, file = "mcmc_split5.RData")
 
-#test
-testB = res$B[[10000]]
-testmu = res$mu[[10000]]
-testsigmasq = res$sigmasq[[10000]]
-testSIGMA = res$SIGMA[[10000]]
+```
 
-mean(testB[300:400,1])
-mean(testB[300:400,1])
-sum(testB[,1] > 0.00001)
 
-cur_vec <- NA
-for(i in 100:2000){
-  cur_vec <- c(cur_vec, res$B[[i]][1,1])
-}
-cur_vec[-1] %>% acf()
 
-unlist(resB)
-
-#332, 338, 342, 550, 588, 612, 657, 694
+```{r}
+iter2 <- 5000
 
 #run2
-set.seed(20220505)
+set.seed(20220506)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
-res2 = gibbsfun(dt, testB, testmu, testsigmasq, testSIGMA, niter = iter, 
+res2 = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter2, 
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res2, file = "mcmc2.RData")
 
-res2$mu[[10000]]
+res2$B[[5000]]
+res2$mu[[5000]]
+res2$SIGMA[[5000]]
 ```
 

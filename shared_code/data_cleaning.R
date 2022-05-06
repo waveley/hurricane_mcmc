@@ -52,6 +52,10 @@ dt = dt %>%
                 d_lat, d_log, d_wkt, year = season...11, 
                 month = month...16, type = nature...12)
 
+dt[1406:1433,"id"] = "ALICE2.1954"
+dt[6786:6805,"id"] = "SUBTROP:UNNAMED2.1974"
+dt[7293:7306,"id"] = "SUBTROP:UNNAMED2.1976"
+
 hc = distinct(dt, id) %>% add_rownames("i")
 
 #hc
@@ -63,17 +67,20 @@ dt = dt %>% left_join(hc)
 delete_id = dt %>% 
   group_by(i) %>% 
   summarize(n = n()) %>%
-  filter(n <= 5)
+  filter(n <= 6)
 
 dt = dt %>% 
-  filter(!(i %in% delete_id$i))
+  filter(!(i %in% delete_id$i)) #%>% 
+  #filter(i != 660)
 
-set.seed(2022)
+set.seed(777)
 train_index = rownames_to_column(dt) %>% 
   group_by(i) %>% 
   sample_frac(0.8) %>% 
   pull(rowname) %>% 
   as.numeric()
+
+train_index = sort(train_index)
 
 train = dt[train_index,]
 test = dt[-train_index,]
