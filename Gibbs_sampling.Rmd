@@ -40,7 +40,8 @@ functions:
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
   
-  res = foreach(j = 1:684, .combine = "+", .packages = c("tidyverse")) %dopar% {
+  N = nrow(B)
+  res = foreach(j = 1:N, .combine = "+", .packages = c("tidyverse")) %dopar% {
     subdat = dat %>% filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
@@ -56,11 +57,14 @@ sigmasq <- function(dat, B) {
   return(sigmasq)
 }
 
+
 #function generating B
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
-  newdat <- dat
   
-  res = foreach(j = 1:684, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
+  newdat <- dat
+  N = length(unique(dat$new_i))
+  
+  res = foreach(j = 1:N, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
     subdat = newdat %>% dplyr::filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
@@ -145,13 +149,13 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
 
 
 ```{r}
-B <- data.frame(matrix(1, nrow = 684, ncol = 5))
+B <- data.frame(matrix(1, nrow = length(unique(dt$new_i)), ncol = 5))
 
 #run 1
-iter1 <- 100
+iter1 <- 10000
 set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
-                        total = iter - 1)
+                        total = iter1 - 1)
 
 res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter1, 
          beta_i, mufun, sigmasq, SIGMAfun)
@@ -165,8 +169,8 @@ testmu = res$mu[[10000]]
 testsigmasq = res$sigmasq[[10000]]
 testSIGMA = res$SIGMA[[10000]]
 
-mean(testB[1:642,1])
-sum(testB[,1] > 0.00001)
+#mean(testB[1:642,1])
+#sum(testB[,1] > 0.00001)
 
 #660(643)
 ```
