@@ -32,7 +32,7 @@ for (j in 1:n_hur){
 
 B_final <- mat_B
 
-save(B_final, file = "B_final.RData")
+save(B_final, file = "generated_data/B_final.RData")
 
 # calculating mu mean
 
@@ -53,7 +53,7 @@ for (k in 1:5){
 
 mu_final <- mat_mu
 
-save(mu_final, file = "mu_final.RData")
+save(mu_final, file = "generated_data/mu_final.RData")
 
 # calculating big_sigma mean
 
@@ -75,10 +75,10 @@ for (j in 1:5){
 }
 
 big_sigma_final <- mat_big_sigma
-save(big_sigma_final, file = "big_sigma_final.RData")
+save(big_sigma_final, file = "generated_data/big_sigma_final.RData")
 
 
 # calculating sigmasq mean
 
 sigmasq_final <- mean(res_list$sigmasq)
-save(sigmasq_final, file = "sigmasq_final.RData")
+save(sigmasq_final, file = "generated_data/sigmasq_final.RData")
