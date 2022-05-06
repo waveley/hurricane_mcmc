@@ -16,7 +16,13 @@ library(progress)
 library(foreach)
 library(doParallel)
 library(doRNG)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+numCores = detectCores()
+registerDoParallel(numCores) 
 ```
+
 
 ```{r}
 source("shared_code/data_cleaning.R")
@@ -25,9 +31,11 @@ dt = train
 temp = distinct(dt, i) %>% add_rownames("new_i")
 dt = dt %>% left_join(temp)
 
-numCores = detectCores()
-registerDoParallel(numCores) 
+```
 
+functions:
+
+```{r}
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
   
@@ -126,20 +134,78 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
 }
 
+```
 
+
+
+```{r}
 B <- data.frame(matrix(1, nrow = 684, ncol = 5))
 
 #run 1
-iter <- 10000
+iter1 <- 10000
 set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
-res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter, 
+res = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter1, 
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res, file = "mcmc1.RData")
 
+
+#test
+testB = res$B[[10000]]
+testmu = res$mu[[10000]]
+testsigmasq = res$sigmasq[[10000]]
+testSIGMA = res$SIGMA[[10000]]
+
+mean(testB[1:642,1])
+sum(testB[,1] > 0.00001)
+
+#660
+```
+
+plots:
+
+```{r}
+burn = 5000 
+
+#beta
+cur_B <- NA
+for (i in burn:10000) {
+  cur_B[i-burn+1] = res$B[[i]][233,1]
+}
+
+cur_B %>% acf()
+cur_B %>% ts.plot()
+data.frame(cur_B) %>% ggplot(aes(x = cur_B)) + geom_histogram(bins = 50)
+
+#mu
+cur_mu <- NA
+for (i in burn:10000) {
+  cur_mu[i-burn+1] = res$mu[[i]][1]
+}
+
+cur_mu %>% acf()
+cur_mu %>% ts.plot()
+data.frame(cur_mu) %>% ggplot(aes(x = cur_mu)) + geom_histogram(bins = 50)
+
+#sigmasq
+cur_s <- NA
+for (i in burn:10000) {
+  cur_s[i-burn+1] <- res$sigmasq[i]
+}
+
+cur_s %>% acf()
+cur_s %>% ts.plot()
+data.frame(cur_s) %>% ggplot(aes(x = cur_s)) + geom_histogram(bins = 50)
+
+#SIGMA
+```
+
+rdata split
+
+```{r}
 res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
 
 split_res <- list()
@@ -167,33 +233,25 @@ save(res3, file = "mcmc_split3.RData")
 save(res4, file = "mcmc_split4.RData")
 save(res5, file = "mcmc_split5.RData")
 
-#test
-testB = res$B[[10000]]
-testmu = res$mu[[10000]]
-testsigmasq = res$sigmasq[[10000]]
-testSIGMA = res$SIGMA[[10000]]
+```
 
-mean(testB[1:642,1])
-sum(testB[,1] > 0.00001)
 
-cur_vec <- NA
-for (i in 5000:10000) {
-  cur_vec <- c(cur_vec, res$B[[i]][1,1])
-}
-cur_vec[-1] %>% acf()
 
-#643
+```{r}
+iter2 <- 5000
 
 #run2
-set.seed(20220505)
+set.seed(20220506)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
-res2 = gibbsfun(dt, testB, testmu, testsigmasq, testSIGMA, niter = iter, 
+res2 = gibbsfun(dt, B, mu = rep(1,5), sigmasq = 1, SIGMA = diag(1,5), niter = iter2, 
          beta_i, mufun, sigmasq, SIGMAfun)
 
 save(res2, file = "mcmc2.RData")
 
-res2$mu[[10000]]
+res2$B[[5000]]
+res2$mu[[5000]]
+res2$SIGMA[[5000]]
 ```
 
