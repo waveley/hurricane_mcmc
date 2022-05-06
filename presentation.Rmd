@@ -15,8 +15,25 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Slide 1
+## Introduction
 
-## Slide 2
+### Data Praparation
 
-## Slide 3
+- Self-join was performed to generate data for Gibbs sampling
+
+- For each hurricane, 80% record was randomly selected and assigned to the train dataset, and the rest are in the test dataset. Hurricanes with less than 5 records were removed.
+
+## Discussion
+
+### Strength
+
+- Unlike classical modeling methods, the MCMC approach bypass coefficient optimization process and directly sample coefficients from their distributions
+  
+- Optimization methods may vary from models to models, while we only need to derive posterior conditional distribution for each coefficients when using Gibbs Sampling.
+  
+  
+  
+### Limitation
+
+- MCMC approaches are often computationally expensive since they involve thousands of rounds of sampling and updating.
+
