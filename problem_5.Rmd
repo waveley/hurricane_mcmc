@@ -1,0 +1,66 @@
+---
+title: "probelm5"
+author: "Paulina Han"
+date: '2022-05-05'
+output: html_document
+---
+
+```{r}
+load("B_final.Rdata")
+source("shared_code/data_cleaning.R")
+library(tidyverse)
+##lm model:
+working_dt <- dt_for5
+
+#regress on beta_0:
+y0 = B_final[1:691,1]
+month = 
+  working_dt %>% 
+  dplyr::select(id, month) %>% 
+  pull(month)
+year = 
+  working_dt %>% 
+  dplyr::select(id, year) %>% 
+  pull(year)
+type = 
+  working_dt %>% 
+  dplyr::select(id, type) %>% 
+  pull(type)
+
+season = 
+  working_dt %>% 
+  dplyr::select(id, season) %>% 
+  pull(season)
+
+lm_b0_year = lm(y0 ~ month + year + type)
+lm_b0_season = lm(y0 ~ season + year + type)
+summary(lm_b0_year)
+summary(lm_b0_season)
+```
+## B1
+
+```{r}
+#regress on beta_1:
+y1 = B_final[1:691,2]
+lm_b1 = lm(y1 ~ factor(month) + year + factor(type))
+summary(lm_b1)
+```
+
+## B2
+
+```{r}
+#regress on beta_2:
+y2 = B_final[1:691,2]
+lm_b2 = lm(y2 ~ factor(month) + year + factor(type))
+summary(lm_b2)
+```
+
+
+## B2
+
+```{r}
+#regress on beta_2:
+y2 = B_final[1:691,2]
+lm_b2 = lm(y2 ~ factor(month) + year + factor(type))
+summary(lm_b2)
+```
