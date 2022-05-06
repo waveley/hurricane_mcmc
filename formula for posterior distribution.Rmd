@@ -9,7 +9,7 @@ output: html_document
 $$
 \begin{aligned}
  f(\mu | B ,\Sigma, \sigma^2, Y)  & \propto exp(-\frac{1}{2} \sum_{i=1}^N ( \beta_{i} - \mu)^{T} \Sigma^{-1}(\beta{i} - \mu)) \\
- & \propto exp( \frac{1}{2} ( \sum_{i=1}^N \beta_{i}^{T}\Sigma^{-1}\beta_{i} + \mu^{T}N\Sigma^{-1}\mu - 2\sum_{i=1}^N\beta_{i}^{T}\Sigma^{-1}\mu)) \\
+ & \propto exp( -\frac{1}{2} ( \sum_{i=1}^N \beta_{i}^{T}\Sigma^{-1}\beta_{i} + \mu^{T}N\Sigma^{-1}\mu - 2\sum_{i=1}^N\beta_{i}^{T}\Sigma^{-1}\mu)) \\
  & \propto exp(R + \beta V \beta -2M \beta) \\
  & \propto exp((\beta - V^{-1}M)^{T} V (\beta - V^{-1}M)) \\
 & \implies \mu \sim MVN(V^{-1}M, V^{-1}) \\
@@ -17,6 +17,5 @@ $$
 V &= N\Sigma^{-1} \\
 R &= \sum_{i=1}^N \beta_{i}^{T}\Sigma^{-1}\beta_{i} \\
 M &= \sum_{i=1}^N \Sigma^{-1}\beta_{i} \\
-
 \end{aligned}
 $$
