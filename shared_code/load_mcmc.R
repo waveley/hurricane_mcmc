@@ -4,11 +4,11 @@
 #
 ###########
 
-load("mcmc_split1.RData")
-load("mcmc_split2.RData")
-load("mcmc_split3.RData")
-load("mcmc_split4.RData")
-load("mcmc_split5.RData")
+load("generated_data/mcmc_split1.RData")
+load("generated_data/mcmc_split2.RData")
+load("generated_data/mcmc_split3.RData")
+load("generated_data/mcmc_split4.RData")
+load("generated_data/mcmc_split5.RData")
 
 B_list <- c(res1[[1]], 
             res2[[1]], 

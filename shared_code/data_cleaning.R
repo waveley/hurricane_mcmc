@@ -40,8 +40,6 @@ dt = dt[2:(nrow(dt)-1),]
 
 #dt
 
-eda_dat <- 
-  dt 
 
 dt = dt %>% 
   filter(id...1 == id...9,
