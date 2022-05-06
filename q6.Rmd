@@ -1,0 +1,97 @@
+---
+title: "Problem 6"
+author: "Lin Yang"
+date: "5/9/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(glmnet)
+library(caret)
+library(MASS)
+```
+
+
+```{r}
+dat6 <- read.csv("data/hurricanoutcome2.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(damage = as.numeric(str_replace(damage, "\\$", "")),
+         deaths = as.integer(gsub(",", "", deaths)),
+         month = as.factor(month),
+         nature = as.factor(nature)) %>% 
+  dplyr::select(-1)
+```
+
+
+```{r}
+#damage
+damage_x <- model.matrix(damage ~ ., dat6)[ ,-1]
+damage_y <- dat6$damage
+
+set.seed(1)
+ctrl <- trainControl(method = "repeatedcv")
+damage.fit <- train(damage_x, damage_y,
+                   method = "glmnet",
+                   preProcess = "scale",
+                   tuneGrid = expand.grid(alpha = 1, 
+                                          lambda = exp(seq(5, -3, length = 100))),
+                   trControl = ctrl)
+
+damage.fit$bestTune
+coef(damage.fit$finalModel, damage.fit$bestTune$lambda) %>% 
+  as.matrix() %>% 
+  knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
+
+#refit a linear regression model
+damage.lm <- lm(damage ~ season + maxspeed + total_pop + percent_usa, data = dat6)
+summary(damage.lm)
+
+fit <- lm(damage ~., data = dat6)
+summary(fit)
+```
+
+
+```{r}
+#deaths
+#quantile(dat6$deaths, 0.95)
+#dat_death <- dat6 %>% filter(deaths <= 1000)
+#boxplot(dat6$deaths)
+#summary(dat_death)
+death_x <- model.matrix(deaths ~ ., dat6)[ ,-1]
+death_y <- dat6$deaths
+
+set.seed(100)
+death.fit <- train(deaths ~ season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+meanpressure+total_pop+percent_poor+percent_usa+ offset(hours),
+                   data = dat6,
+                   method = "glmnet",
+                   family = "poisson",
+                   preProcess = "scale",
+                   tuneGrid = expand.grid(alpha = 1, 
+                                          lambda = exp(seq(-4, 5, length = 500))),
+                   trControl = ctrl)
+plot(death.fit)
+death.fit$bestTune
+coef(death.fit$finalModel, death.fit$bestTune$lambda) %>% 
+  as.matrix() %>% 
+  knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
+
+
+poi_fit = glm(deaths ~ season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+meanpressure+total_pop+percent_poor+percent_usa+ offset(log(hours)), family = poisson(link=log), data = dat6)
+summary(poi_fit)
+
+#wave.nb=glm.nb(deaths ~season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+mea#npressure+total_pop+percent_poor+percent_usa+ offset(log(hours)), data = dat6)
+#summary(wave.nb)
+#sqrt(sum((predict(wave.nb, newdata = dat6) - dat6$deaths)^2))
+
+
+
+#sqrt(sum((predict(poi_fit, newdata = dat6) - dat6$deaths)^2))
+#summary(dat6$deaths)
+```
+
+
+
+
+
