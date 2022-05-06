@@ -71,7 +71,9 @@ delete_id = dt %>%
 
 dt = dt %>% 
   filter(!(i %in% delete_id$i)) #%>% 
-  #filter(i != 660)
+  #filter(i != 660) %>% 
+  #filter(i != 64) %>% 
+  #filter(i != 389)
 
 set.seed(777)
 train_index = rownames_to_column(dt) %>% 
