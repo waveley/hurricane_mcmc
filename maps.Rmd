@@ -1,0 +1,57 @@
+---
+title: "Plotly"
+author: "Waveley Qiu (wq2162)"
+date: "2022-05-06"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("shared_code/data_cleaning.R")
+```
+
+```{r}
+head(raw)
+
+eda_dat <-
+  raw %>%
+  mutate(
+    day = day(time),
+    year = season,
+    time = hour(time)
+  )
+
+# select first hurricane
+
+hur_1 <- 
+  eda_dat %>%
+  group_by(id) %>%
+  mutate(
+    hur_id = cur_group_id()
+  ) %>%
+  filter(hur_id %in% c(4, 6))
+```
+
+
+```{r}
+hur_1 %>% head()
+library(plotly)
+
+hur_1 %>% 
+  plot_ly(
+    lat = ~latitude, 
+    lon = ~longitude, 
+    type = "scattermapbox", 
+    mode = "line", 
+    alpha = 1,
+    color = ~id) %>% 
+  layout(
+    mapbox = list(
+      style = 'carto-positron',
+      center = list(lon = -65, lat = 30)))
+```
+
+

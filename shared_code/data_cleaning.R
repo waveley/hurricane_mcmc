@@ -40,6 +40,9 @@ dt = dt[2:(nrow(dt)-1),]
 
 #dt
 
+eda_dat <- 
+  dt 
+
 dt = dt %>% 
   filter(id...1 == id...9,
          time...10 + 6*60*60 == time...4) %>% 
@@ -82,7 +85,9 @@ delete_id = dt %>%
 
 dt = dt %>% 
   filter(!(i %in% delete_id$i)) #%>% 
-  #filter(i != 660)
+  #filter(i != 660) %>% 
+  #filter(i != 64) %>% 
+  #filter(i != 389)
 
 set.seed(777)
 train_index = rownames_to_column(dt) %>% 
