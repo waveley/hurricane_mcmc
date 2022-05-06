@@ -1,8 +1,8 @@
 ---
 title: "probelm5"
-author: "Paulina Han"
+author: "Paulina Han, Yida Wang"
 date: '2022-05-05'
-output: html_document
+output: pdf_document
 ---
 
 ```{r}
@@ -13,7 +13,7 @@ library(tidyverse)
 working_dt <- dt_for5
 
 #regress on beta_0:
-y0 = B_final[1:691,1]
+y0 = B_final[ 1: 684 , 1]
 month = 
   working_dt %>% 
   dplyr::select(id, month) %>% 
@@ -32,35 +32,101 @@ season =
   dplyr::select(id, season) %>% 
   pull(season)
 
-lm_b0_year = lm(y0 ~ month + year + type)
-lm_b0_season = lm(y0 ~ season + year + type)
-summary(lm_b0_year)
-summary(lm_b0_season)
+# lm_b0_year = lm(y0 ~ month + year + type)
+# lm_b0_season = lm(y0 ~ season + year + type)
+# summary(lm_b0_year)
+# summary(lm_b0_season)
 ```
+
+## B0
+
+```{r}
+#regress on beta_0:
+y0 = B_final[1: 684 ,1]
+lm_b0 = lm(y0 ~ factor(month) + year + factor(type))
+lm_b0_season = lm(y0~ factor(season) + year + factor(type))
+summary(lm_b0)
+summary(lm_b0_season)
+
+```
+
 ## B1
 
 ```{r}
 #regress on beta_1:
-y1 = B_final[1:691,2]
+y1 = B_final[1: 684,2]
 lm_b1 = lm(y1 ~ factor(month) + year + factor(type))
+lm_b1_season = lm(y1~ factor(season) + year + factor(type))
 summary(lm_b1)
+summary(lm_b1_season)
+
 ```
 
 ## B2
 
 ```{r}
 #regress on beta_2:
-y2 = B_final[1:691,2]
+y2 = B_final[1: 684,3]
 lm_b2 = lm(y2 ~ factor(month) + year + factor(type))
+lm_b2_season = lm(y2~ factor(season) + year + factor(type))
 summary(lm_b2)
+summary(lm_b2_season)
+
 ```
 
 
-## B2
+## B3
 
 ```{r}
-#regress on beta_2:
-y2 = B_final[1:691,2]
-lm_b2 = lm(y2 ~ factor(month) + year + factor(type))
-summary(lm_b2)
+#regress on beta_3:
+y3 = B_final[1: 684,4]
+lm_b3 = lm(y3 ~ factor(month) + year + factor(type))
+lm_b3_season = lm(y3~ factor(season) + year + factor(type))
+summary(lm_b3)
+summary(lm_b3_season)
+
 ```
+
+## B4
+
+```{r}
+#regress on beta_4:
+y4 = B_final[1: 684,5]
+lm_b4 = lm(y4 ~ factor(month) + year + factor(type))
+lm_b4_season = lm(y4~ factor(season) + year + factor(type))
+summary(lm_b4)
+summary(lm_b4_season)
+```
+
+Tables for coefficients
+```{r}
+b0 = summary(lm_b0)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b0 = Estimate)
+b1 = summary(lm_b1)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b1 = Estimate)
+b2 = summary(lm_b2)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b2 = Estimate)
+b3 = summary(lm_b3)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b3 = Estimate)
+b4 = summary(lm_b4)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b4 = Estimate)
+table_lm = list(b0,b1,b2,b3,b4) %>% reduce(full_join, by = "rowname")
+
+b0_sea = summary(lm_b0_season)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b0 = Estimate)
+b1_sea = summary(lm_b1_season)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b1 = Estimate)
+b2_sea = summary(lm_b2_season)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b2 = Estimate)
+b3_sea = summary(lm_b3_season)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b3 = Estimate)
+b4_sea = summary(lm_b4_season)$coefficients %>% as.data.frame %>% rownames_to_column() %>% select(rowname, Estimate) %>%
+  rename(b4 = Estimate)
+table_sealm = list(b0_sea,b1_sea,b2_sea,b3_sea,b4_sea) %>% reduce(full_join, by = "rowname")
+
+table_lm %>% knitr::kable()
+table_sealm %>% knitr::kable()
+```
+
+
+
