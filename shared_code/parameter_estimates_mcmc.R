@@ -9,7 +9,7 @@
 
 source("shared_code/load_mcmc.R")
 
-n_hur <- 684
+n_hur <- 678
 
 mat_B <- matrix(NA, nrow = n_hur, ncol = 5)
 

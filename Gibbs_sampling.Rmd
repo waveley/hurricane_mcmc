@@ -152,7 +152,7 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
 B <- data.frame(matrix(1, nrow = length(unique(dt$new_i)), ncol = 5))
 
 #run 1
-iter1 <- 10000
+iter1 <- 1000
 set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter1 - 1)
@@ -164,10 +164,10 @@ save(res, file = "mcmc1.RData")
 
 
 #test
-testB = res$B[[10000]]
-testmu = res$mu[[10000]]
-testsigmasq = res$sigmasq[[10000]]
-testSIGMA = res$SIGMA[[10000]]
+testB = res$B[[1000]]
+testmu = res$mu[[1000]]
+testsigmasq = res$sigmasq[[1000]]
+testSIGMA = res$SIGMA[[1000]]
 
 #mean(testB[1:642,1])
 #sum(testB[,1] > 0.00001)
@@ -178,15 +178,14 @@ testSIGMA = res$SIGMA[[10000]]
 plots:
 
 ```{r}
-burn = 5000 
-
+burn = 500
+chain_length = res[[1]] %>% length()
+res$B[500:1000]
 #beta
 cur_B <- NA
-for (i in burn:10000) {
-  cur_B[i-burn+1] = res$B[[i]][233,1]
+for (i in burn:chain_length) {
+  cur_B[i-burn+1] = res$B[[i]][1,1]
 }
-
-Beta = expression(beta)
 
 cur_B %>% acf()
 cur_B %>% ts.plot(xlab = "iteration", ylab = expression(beta[0]), main = expression(paste("Time Series Plot of ", beta[0])))
@@ -194,8 +193,8 @@ data.frame(cur_B) %>% ggplot(aes(x = cur_B)) + geom_histogram(bins = 50)
 
 #mu
 cur_mu <- NA
-for (i in burn:10000) {
-  cur_mu[i-burn+1] = res$mu[[i]][1]
+for (i in burn+1:chain_length) {
+  cur_mu[i-burn] = res$mu[[i]][1]
 }
 
 cur_mu %>% acf()
@@ -204,7 +203,7 @@ data.frame(cur_mu) %>% ggplot(aes(x = cur_mu)) + geom_histogram(bins = 50)
 
 #sigmasq
 cur_s <- NA
-for (i in burn:10000) {
+for (i in burn:chain_length) {
   cur_s[i-burn+1] <- res$sigmasq[i]
 }
 
@@ -218,12 +217,12 @@ data.frame(cur_s) %>% ggplot(aes(x = cur_s)) + geom_histogram(bins = 50)
 rdata split
 
 ```{r}
-res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
+# res1 <- list(res$B[1:2500], res$mu[1:2500], res$sigmasq[1:2500], res$SIGMA[1:2500])
 
 split_res <- list()
 cur_start <- 1
 nsplits <- 5
-nchain <- 10000
+nchain <- chain_length
 for (i in 1:nsplits) {
   cur_end <- i*nchain/nsplits
   split_res[[i]] <- list(res$B[cur_start:cur_end], 
@@ -239,11 +238,11 @@ res3 <- split_res[[3]]
 res4 <- split_res[[4]]
 res5 <- split_res[[5]]
 
-save(res1, file = "mcmc_split1.RData")
-save(res2, file = "mcmc_split2.RData")
-save(res3, file = "mcmc_split3.RData")
-save(res4, file = "mcmc_split4.RData")
-save(res5, file = "mcmc_split5.RData")
+save(res1, file = "generated_data/mcmc_split1.RData")
+save(res2, file = "generated_data/mcmc_split2.RData")
+save(res3, file = "generated_data/mcmc_split3.RData")
+save(res4, file = "generated_data/mcmc_split4.RData")
+save(res5, file = "generated_data/mcmc_split5.RData")
 
 ```
 
