@@ -67,8 +67,8 @@ wkt = wkt[2:nrow(wkt),]
 
 dt = bind_cols(dt, wkt) %>% 
   filter(id...1 == id...10) %>% 
-  select(-wkt_new...2, -id...10, wkt_new = wkt_new...11, id = id...1) %>% 
-  select(id, wkt_new, wkt_cur, d_lat, d_log, d_wkt, year, month, type)
+  dplyr::select(-wkt_new...2, -id...10, wkt_new = wkt_new...11, id = id...1) %>% 
+  dplyr::select(id, wkt_new, wkt_cur, d_lat, d_log, d_wkt, year, month, type)
 
 hc = distinct(dt, id) %>% add_rownames("i")
 

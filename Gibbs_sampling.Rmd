@@ -186,8 +186,10 @@ for (i in burn:10000) {
   cur_B[i-burn+1] = res$B[[i]][233,1]
 }
 
+Beta = expression(beta)
+
 cur_B %>% acf()
-cur_B %>% ts.plot()
+cur_B %>% ts.plot(xlab = "iteration", ylab = expression(beta[0]), main = expression(paste("Time Series Plot of ", beta[0])))
 data.frame(cur_B) %>% ggplot(aes(x = cur_B)) + geom_histogram(bins = 50)
 
 #mu
