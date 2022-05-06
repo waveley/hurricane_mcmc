@@ -38,7 +38,7 @@ dt = bind_cols(rbind(raw, placeholder),
 
 dt = dt[2:(nrow(dt)-1),]
 
-dt
+#dt
 
 dt = dt %>% 
   filter(id...1 == id...9,
@@ -58,11 +58,11 @@ dt[7293:7306,"id"] = "SUBTROP:UNNAMED2.1976"
 
 hc = distinct(dt, id) %>% add_rownames("i")
 
-hc
+#hc
 
 dt = dt %>% left_join(hc)
 
-head(dt)
+#head(dt)
 
 delete_id = dt %>% 
   group_by(i) %>% 
@@ -87,7 +87,6 @@ test = dt[-train_index,]
 
 #head(dt)
 
-
 dt_for5 = dt %>% 
   group_by(i) %>% 
   slice(1) %>% 
@@ -99,5 +98,4 @@ dt_for5 = dt %>%
   )
 
 
-dt_for5
-
+#dt_for5
