@@ -13,7 +13,7 @@ library(tidyverse)
 working_dt <- dt_for5
 
 #regress on beta_0:
-y0 = B_final[ 1: 684 , 1]
+y0 = B_final[ 1: 678 , 1]
 month = 
   working_dt %>% 
   dplyr::select(id, month) %>% 

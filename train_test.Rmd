@@ -14,7 +14,7 @@ library(ModelMetrics)
 
 ```{r}
 source("shared_code/data_cleaning.R")
-load("B_final.RData")
+load("generated_data/B_final.RData")
 temp = distinct(test, i) %>% add_rownames("new_i")
 test = test %>% left_join(temp)
 #test = test[-c(413, 414, 2305, 2306, 3934, 3935),]
