@@ -115,7 +115,7 @@ V^{-1} &= I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T
 &\implies n^* = 3d + N + 3
 \end{aligned}
 $$
-Thus, $A = \Sigma^{-1} \sim \text{Wishart}\left(n^*, \,\, I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T\right)$
+Thus, $A = \Sigma^{-1} \sim \text{Wishart}\left(n^*, \,\, (I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T\right)^{-1})$
 
 
 

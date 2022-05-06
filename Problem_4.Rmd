@@ -1,0 +1,49 @@
+---
+title: "train test"
+author: "Haolin Zhong"
+date: "2022/5/5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Preparation
+
+```{r}
+source("shared_code/data_cleaning.R")
+load("B_final.RData")
+
+```
+## for problem 5
+
+```{r}
+dt %>% group_by(i) %>% slice(1) %>% arrange(as.numeric(i))
+```
+
+```{r}
+my.predict = function(B, newdata) {
+  res = c()
+  
+  for (j in 1:nrow(newdata)) {
+    i = newdata[j,] %>% pull(i) %>% as.numeric()
+    x = c(1, as.matrix(test[j, 3:6]))
+    pred = sum(B[i,] * x)
+    res = c(res, pred)
+  }
+  return(res)
+}
+```
+
+
+```{r}
+library(ModelMetrics)
+pred = my.predict(B_final, test)
+
+rmse(pred, test$wkt_new)
+```
+
+
+
+
