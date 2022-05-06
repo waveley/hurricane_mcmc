@@ -22,14 +22,17 @@ library(doRNG)
 source("shared_code/data_cleaning.R")
 dt = train
 
+temp = distinct(dt, i) %>% add_rownames("new_i")
+dt = dt %>% left_join(temp)
+
 numCores = detectCores()
 registerDoParallel(numCores) 
 
 #function calculating beta in inverse gamma distribution
 beta_gamma <- function(dat, B) {
   
-  res = foreach(j = 1:700, .combine = "+", .packages = c("tidyverse")) %dorng% {
-    subdat = dat %>% filter(i == j)
+  res = foreach(j = 1:684, .combine = "+", .packages = c("tidyverse")) %dopar% {
+    subdat = dat %>% filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     beta = 0.5*(sum((y - x %*% t(B[j, ]))^2))
@@ -48,13 +51,13 @@ sigmasq <- function(dat, B) {
 beta_i <- function(dat, siginv, sigmasqinv, mu) {
   newdat <- dat
   
-  res = foreach(j = 1:700, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
-    subdat = newdat %>% dplyr::filter(i == j)
+  res = foreach(j = 1:684, .combine = "rbind", .packages = c("tidyverse", "mixAK", "MASS", "pracma")) %dorng% {
+    subdat = newdat %>% dplyr::filter(new_i == j)
     y = subdat[, 2]
     x = cbind(rep(1, nrow(subdat)), subdat[, 3:6]) %>% as.matrix()
     I = diag(x = 1, nrow(subdat), nrow(subdat))
     Vinv = pinv(siginv + sigmasqinv*(t(x) %*% I %*% x))
-    M = sigmasqinv*(t(y)%*% I %*%x) + t(mu) %*% siginv
+    M = sigmasqinv*(t(y) %*% I %*% x) + t(mu) %*% siginv
     mvrnorm(1, Vinv %*% t(M), Vinv)
   }
   res = res %>% na.omit()
@@ -80,17 +83,22 @@ mufun = function(B, SIGMA) {
   
 }
 
+#mufun(testB, testSIGMA)
+#colSums(testB)/683
+#mm = solve(683 * solve(testSIGMA)) %*% (solve(testSIGMA) %*% colSums(testB))
+#mvrnorm(mu = mm, Sigma = solve(683 * solve(testSIGMA)))
+
 #function generating SIGMA
 SIGMAfun = function(B, mu) {
   
   B = as.matrix(B)
   N = nrow(B)
   n = 18 + N
-  S = 0
+  S = diag(0,5)
   for (i in 1:N) {
-    S = S + t(B[i,] - mu) %*% (B[i,] - mu) %>% as.numeric()
+    S = S + (B[i,] - mu) %*% t(B[i,] - mu)
   }
-  S = diag(S,5) + diag(1,5)
+  S = S + diag(1,5)
   
   SIGMA = rWISHART(1, df=n, S=S)
   
@@ -108,8 +116,8 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
   
   for (k in 2:niter) {
     pb1$tick()
-    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k-1]]), 1/sigmasqvec[k-1], muvec[[k-1]]) 
-    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k-1]])
+    Bvec[[k]] = Bfun(y, solve(SIGMAvec[[k - 1]]), 1/sigmasqvec[k - 1], muvec[[k - 1]]) 
+    muvec[[k]] = mufun(Bvec[[k]], SIGMAvec[[k - 1]])
     sigmasqvec[k] = sigmasqfun(y, Bvec[[k]])
     SIGMAvec[[k]] = SIGMAfun(Bvec[[k]], muvec[[k]])
   }
@@ -119,11 +127,11 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
 }
 
 
-B <- data.frame(matrix(1, nrow = 700, ncol = 5))
+B <- data.frame(matrix(1, nrow = 684, ncol = 5))
 
 #run 1
 iter <- 10000
-set.seed(20220504)
+set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
 
@@ -138,7 +146,7 @@ split_res <- list()
 cur_start <- 1
 nsplits <- 5
 nchain <- 10000
-for(i in 1:nsplits){
+for (i in 1:nsplits) {
   cur_end <- i*nchain/nsplits
   split_res[[i]] <- list(res$B[cur_start:cur_end], 
                        res$mu[cur_start:cur_end], 
@@ -165,19 +173,16 @@ testmu = res$mu[[10000]]
 testsigmasq = res$sigmasq[[10000]]
 testSIGMA = res$SIGMA[[10000]]
 
-mean(testB[300:400,1])
-mean(testB[300:400,1])
+mean(testB[1:642,1])
 sum(testB[,1] > 0.00001)
 
 cur_vec <- NA
-for(i in 100:2000){
+for (i in 5000:10000) {
   cur_vec <- c(cur_vec, res$B[[i]][1,1])
 }
 cur_vec[-1] %>% acf()
 
-unlist(resB)
-
-#332, 338, 342, 550, 588, 612, 657, 694
+#643
 
 #run2
 set.seed(20220505)
