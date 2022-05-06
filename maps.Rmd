@@ -40,6 +40,7 @@ hur_1 <-
 ```{r}
 hur_1 %>% head()
 library(plotly)
+
 hur_1 %>% 
   plot_ly(
     lat = ~latitude, 
