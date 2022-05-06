@@ -9,14 +9,16 @@
 
 source("shared_code/load_mcmc.R")
 
-mat_B <- matrix(NA, nrow = 700, ncol = 5)
+n_hur <- 684
+
+mat_B <- matrix(NA, nrow = n_hur, ncol = 5)
 
 library(progress)
 
 # calculating B mean
 pb2 <- progress_bar$new(format = "calculating B mean... [:bar] :percent eta: :eta",
-                        total = 700)
-for (j in 1:700){
+                        total = n_hur)
+for (j in 1:n_hur){
   pb2$tick()
   for (k in 1:5){
     cur_sum <- 0
