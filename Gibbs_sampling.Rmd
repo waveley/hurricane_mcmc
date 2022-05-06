@@ -16,6 +16,7 @@ library(progress)
 library(foreach)
 library(doParallel)
 library(doRNG)
+library(pracma)
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
@@ -51,7 +52,7 @@ beta_gamma <- function(dat, B) {
 sigmasq <- function(dat, B) {
   alpha = nrow(dat)/2
   beta = beta_gamma(dat, B)
-  sigmasq = rinvgamma(1, alpha = alpha, beta = beta) 
+  sigmasq = extraDistr::rinvgamma(1, alpha = alpha, beta = beta) 
   return(sigmasq)
 }
 
@@ -92,9 +93,11 @@ mufun = function(B, SIGMA) {
 }
 
 #mufun(testB, testSIGMA)
-#colSums(testB)/683
-#mm = solve(683 * solve(testSIGMA)) %*% (solve(testSIGMA) %*% colSums(testB))
-#mvrnorm(mu = mm, Sigma = solve(683 * solve(testSIGMA)))
+#colSums(testB)/684
+#mm = solve(684 * solve(testSIGMA)) %*% (solve(testSIGMA) %*% colSums(testB))
+#mvrnorm(mu = mm, Sigma = diag(1e-19,5))
+#mvrnorm(mu = mm, Sigma = diag(1e-5,5))
+
 
 #function generating SIGMA
 SIGMAfun = function(B, mu) {
@@ -107,11 +110,14 @@ SIGMAfun = function(B, mu) {
     S = S + (B[i,] - mu) %*% t(B[i,] - mu)
   }
   S = S + diag(1,5)
+  Sinv = solve(S)
   
-  SIGMA = rWISHART(1, df=n, S=S)
+  SIGMA = rWISHART(1, df=n, S=Sinv)
   
   return(solve(SIGMA))
 }
+
+#SIGMAfun(testB, mm)
 
 #Gibbs
 gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfun, SIGMAfun) {
@@ -142,7 +148,7 @@ gibbsfun = function(y, B, mu, sigmasq, SIGMA, niter=1000, Bfun, mufun, sigmasqfu
 B <- data.frame(matrix(1, nrow = 684, ncol = 5))
 
 #run 1
-iter1 <- 10000
+iter1 <- 100
 set.seed(20220505)
 pb1 <- progress_bar$new(format = "gibbs sampling... [:bar] :percent eta: :eta",
                         total = iter - 1)
@@ -162,7 +168,7 @@ testSIGMA = res$SIGMA[[10000]]
 mean(testB[1:642,1])
 sum(testB[,1] > 0.00001)
 
-#660
+#660(643)
 ```
 
 plots:
