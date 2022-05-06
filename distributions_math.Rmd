@@ -11,7 +11,15 @@ $$
 \begin{aligned}
 Y_i(t+6) &= \beta_{0i} + \beta_{1i}Y_i(t) + \beta_{2i}\Delta_{i1}(t) + \beta_{3i} \Delta_{i2}(t) + \beta_{4i} \Delta_{i3}(t) + \varepsilon_i(t)
 \\
-= \eta_i(t)
+X_i &= 
+\left(\begin{matrix}
+1 & Y_i(t) & \Delta_{i1}(t) & \Delta_{i2}(t)  & \Delta_{i3}(t)
+\end{matrix}\right)
+\\
+\bf{\beta_i} &= 
+\left(\begin{matrix}\beta_{0i} & \beta_{2i} & \beta_{3i}\right)
+\\
+\eta_i(t) &= \beta_{0i} + \beta_{1i}Y_i(t) + \beta_{2i}\Delta_{i1}(t) + \beta_{3i} \Delta_{i2}(t) + \beta_{4i} \Delta_{i3}(t)
 \end{aligned}
 $$
 
@@ -102,7 +110,7 @@ V^{-1} &= I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T
 \\
 \frac{1}{2}(n^* - p - 1) &= d + \frac{N}{2} + 1
 \\
-2d + N + 1 &= n^* - d - 1
+2d + N + 2 &= n^* - d - 1
 \\
 &\implies n^* = 3d + N + 3
 \end{aligned}
