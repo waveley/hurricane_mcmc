@@ -6,14 +6,15 @@ output: pdf_document
 ---
 
 ```{r}
-load("B_final.Rdata")
+load("generated_data/B_final.Rdata")
 source("shared_code/data_cleaning.R")
 library(tidyverse)
+library(ggplot2)
 ##lm model:
 working_dt <- dt_for5
 
 #regress on beta_0:
-y0 = B_final[ 1: 678 , 1]
+y0 = B_final[ 1:678 , 1]
 month = 
   working_dt %>% 
   dplyr::select(id, month) %>% 
@@ -38,11 +39,47 @@ season =
 # summary(lm_b0_season)
 ```
 
+# Do some EDA before fiting models
+```{r}
+B_final1 = B_final %>% as.data.frame()
+names(B_final1)[1] <- "beta0"
+names(B_final1)[2] <- "beta1"
+names(B_final1)[3] <- "beta2"
+names(B_final1)[4] <- "beta3"
+names(B_final1)[5] <- "beta4"
+head(B_final1)
+ts1 = data.frame(B_final1, season)
+
+ts1_df = ts1 %>% 
+  pivot_longer(
+    c(beta0:beta4),
+    names_to = "beta",
+    values_to = "beta_vals"
+  ) 
+
+ggplot(data = ts1_df, aes(x = season, y = beta_vals, color = beta)) + geom_point() + geom_boxplot() 
+#+ facet_grid(season~beta, scale = "free_y")
+```
+
+```{r}
+ts2 = data.frame(B_final1, year)
+head(ts2)
+
+ts2_df = ts2 %>% 
+  pivot_longer(
+    c(beta0:beta4),
+    names_to = "beta",
+    values_to = "beta_vals"
+  ) 
+
+ggplot(data = ts2_df, aes(x = year, y = beta_vals, color = beta)) + geom_point()
+```
+
 ## B0
 
 ```{r}
 #regress on beta_0:
-y0 = B_final[1: 684 ,1]
+y0 = B_final[1: 678 ,1]
 lm_b0 = lm(y0 ~ factor(month) + year + factor(type))
 lm_b0_season = lm(y0~ factor(season) + year + factor(type))
 summary(lm_b0)
@@ -54,7 +91,7 @@ summary(lm_b0_season)
 
 ```{r}
 #regress on beta_1:
-y1 = B_final[1: 684,2]
+y1 = B_final[1: 678,2]
 lm_b1 = lm(y1 ~ factor(month) + year + factor(type))
 lm_b1_season = lm(y1~ factor(season) + year + factor(type))
 summary(lm_b1)
@@ -66,7 +103,7 @@ summary(lm_b1_season)
 
 ```{r}
 #regress on beta_2:
-y2 = B_final[1: 684,3]
+y2 = B_final[1: 678,3]
 lm_b2 = lm(y2 ~ factor(month) + year + factor(type))
 lm_b2_season = lm(y2~ factor(season) + year + factor(type))
 summary(lm_b2)
@@ -79,7 +116,7 @@ summary(lm_b2_season)
 
 ```{r}
 #regress on beta_3:
-y3 = B_final[1: 684,4]
+y3 = B_final[1: 678,4]
 lm_b3 = lm(y3 ~ factor(month) + year + factor(type))
 lm_b3_season = lm(y3~ factor(season) + year + factor(type))
 summary(lm_b3)
@@ -91,7 +128,7 @@ summary(lm_b3_season)
 
 ```{r}
 #regress on beta_4:
-y4 = B_final[1: 684,5]
+y4 = B_final[1: 678,5]
 lm_b4 = lm(y4 ~ factor(month) + year + factor(type))
 lm_b4_season = lm(y4~ factor(season) + year + factor(type))
 summary(lm_b4)
