@@ -49,30 +49,44 @@ dt = dt %>%
     d_log = longitude...6 - longitude...14,
     d_wkt = wind_kt...7 - wind_kt...15
   ) %>% 
-  dplyr::select(id = id...1, wkt_new = wind_kt...7, wkt_cur = wind_kt...15, 
+  dplyr::select(id = id...1, wkt_cur = wind_kt...7, wkt_old = wind_kt...15, 
                 d_lat, d_log, d_wkt, year = season...11, 
                 month = month...16, type = nature...12)
+
+# new_dt <- dt %>%
+#  mutate(wkt_old = wkt_cur,
+#         wkt_cur = wkt_new) %>%
+#  select(id, wkt_cur, wkt_old, d_lat, d_log, d_wkt, year, month, type)
 
 dt[1406:1433,"id"] = "ALICE2.1954"
 dt[6786:6805,"id"] = "SUBTROP:UNNAMED2.1974"
 dt[7293:7306,"id"] = "SUBTROP:UNNAMED2.1976"
 
 placeholder = data.frame(id = "placeholder", 
-                         wkt_new = 0)
+                         wkt_cur = 0)
 
 wkt = rbind(dt[,1:2], placeholder)
 wkt = wkt[2:nrow(wkt),]
 
 dt = bind_cols(dt, wkt) %>% 
   filter(id...1 == id...10) %>% 
-  dplyr::select(-wkt_new...2, -id...10, wkt_new = wkt_new...11, id = id...1) %>% 
-  dplyr::select(id, wkt_new, wkt_cur, d_lat, d_log, d_wkt, year, month, type)
+  mutate(
+    wkt_cur = wkt_cur...2,
+    wkt_new = wkt_cur...11
+  ) %>%
+  dplyr::select(-wkt_cur...2, -id...10, id = id...1) %>% 
+  dplyr::select(id, wkt_new, wkt_cur, wkt_old, d_lat, d_log, d_wkt, year, month, type)
 
 hc = distinct(dt, id) %>% add_rownames("i")
 
 #hc
 
 dt = dt %>% left_join(hc)
+
+test <- dt %>% 
+  mutate(
+    response_ws = lag(wkt_new, 1)
+  )
 
 #head(dt)
 
