@@ -1,0 +1,147 @@
+---
+title: "ts_plot"
+author: "Paulina Han"
+date: '2022-05-07'
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+load("generated_data/mcmc_split1.RData")
+load("generated_data/mcmc_split2.RData")
+load("generated_data/mcmc_split3.RData")
+load("generated_data/mcmc_split4.RData")
+load("generated_data/mcmc_split5.RData")
+
+#burn <- 5000
+chain_length <- 10000
+
+B_list <- c(res1[[1]], 
+            res2[[1]], 
+            res3[[1]], 
+            res4[[1]], 
+            res5[[1]])
+
+mu_list <- c(res1[[2]], 
+             res2[[2]], 
+             res3[[2]], 
+             res4[[2]], 
+             res5[[2]])
+
+sigmasq_list <- c(res1[[3]], 
+                  res2[[3]], 
+                  res3[[3]], 
+                  res4[[3]], 
+                  res5[[3]])
+
+big_sigma_list <- c(res1[[4]], 
+                    res2[[4]], 
+                    res3[[4]], 
+                    res4[[4]], 
+                    res5[[4]])
+
+
+```
+
+
+```{r}
+es_list <- list(B = B_list,
+                 mu = mu_list, 
+                 sigmasq = sigmasq_list, 
+                 big_sigma = big_sigma_list)
+```
+
+
+Beta
+```{r}
+burn = 0
+cur_B = data.frame()
+res = es_list
+for (i in 1:5) {
+  for (j in (burn+1):chain_length) {
+    cur_B[j-burn,i] = res$B[[j]][32,i]
+  }
+}
+colnames(cur_B) = paste0("beta", 0:4)
+
+par(mfrow = c(1,5))
+acf(cur_B[1])
+acf(cur_B[2])
+acf(cur_B[3])
+acf(cur_B[4])
+acf(cur_B[5])
+
+par(mfrow = c(2,2))
+ts.plot(cur_B[1], xlab = "iteration", ylab = expression(beta[0]))
+ts.plot(cur_B[2], xlab = "iteration", ylab = expression(beta[1]))
+ts.plot(cur_B[3], xlab = "iteration", ylab = expression(beta[2]))
+ts.plot(cur_B[4], xlab = "iteration", ylab = expression(beta[3]))
+ts.plot(cur_B[5], xlab = "iteration", ylab = expression(beta[4]))
+
+par(mfrow = c(1,5))
+hist(unlist(cur_B[1]), main = "", breaks = 30, xlab = expression(beta[0]))
+hist(unlist(cur_B[2]), main = "", breaks = 30, xlab = expression(beta[1]))
+hist(unlist(cur_B[3]), main = "", breaks = 25, xlab = expression(beta[2]))
+hist(unlist(cur_B[4]), main = "", breaks = 25, xlab = expression(beta[3]))
+hist(unlist(cur_B[5]), main = "", breaks = 30, xlab = expression(beta[4]))
+
+```
+
+#mu
+```{r}
+#mu
+cur_mu = data.frame()
+for (i in 1:5) {
+  for (j in (burn+1):chain_length) {
+    cur_mu[j-burn,i] = res$mu[[j]][i]
+  }
+}
+colnames(cur_mu) = paste0("mu", 0:4)
+
+#par(mfrow = c(3,5))
+acf(cur_mu[1])
+acf(cur_mu[2])
+acf(cur_mu[3])
+acf(cur_mu[4])
+acf(cur_mu[5])
+
+par(mfrow = c(2,2))
+ts.plot(cur_mu[1], xlab = "iteration", ylab = expression(mu[0]))
+ts.plot(cur_mu[2], xlab = "iteration", ylab = expression(mu[1]))
+ts.plot(cur_mu[3], xlab = "iteration", ylab = expression(mu[2]))
+ts.plot(cur_mu[4], xlab = "iteration", ylab = expression(mu[3]))
+ts.plot(cur_mu[5], xlab = "iteration", ylab = expression(mu[4]))
+
+
+hist(unlist(cur_mu[1]), main = "", breaks = 30, xlab = expression(mu[0]))
+hist(unlist(cur_mu[2]), main = "", breaks = 30, xlab = expression(mu[1]))
+hist(unlist(cur_mu[3]), main = "", breaks = 30, xlab = expression(mu[2]))
+hist(unlist(cur_mu[4]), main = "", breaks = 30, xlab = expression(mu[3]))
+hist(unlist(cur_mu[5]), main = "", breaks = 35, xlab = expression(mu[4]))
+
+
+```
+
+
+## sigma
+
+```{r}
+#sigmasq
+cur_s <- NA
+for (i in 1:chain_length) {
+  cur_s[i] <- res$sigmasq[i]
+}
+
+cur_s %>% acf()
+cur_s %>% ts.plot()
+data.frame(cur_s) %>% ggplot(aes(x = cur_s)) + geom_histogram(bins = 50)
+
+
+
+```
+
+
