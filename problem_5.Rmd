@@ -88,7 +88,7 @@ summary(lm_b0_season)
 ```
 
 ## B1
-
+#speed at t
 ```{r}
 #regress on beta_1:
 y1 = B_final[1: 678,2]
@@ -100,7 +100,7 @@ summary(lm_b1_season)
 ```
 
 ## B2
-
+#lattitude
 ```{r}
 #regress on beta_2:
 y2 = B_final[1: 678,3]
@@ -113,7 +113,7 @@ summary(lm_b2_season)
 
 
 ## B3
-
+# longitude
 ```{r}
 #regress on beta_3:
 y3 = B_final[1: 678,4]
@@ -125,7 +125,7 @@ summary(lm_b3_season)
 ```
 
 ## B4
-
+# wind speed diff between (t - (t-6))
 ```{r}
 #regress on beta_4:
 y4 = B_final[1: 678,5]

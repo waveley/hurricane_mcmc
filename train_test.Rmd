@@ -17,13 +17,9 @@ source("shared_code/data_cleaning.R")
 load("generated_data/B_final.RData")
 temp = distinct(test, i) %>% add_rownames("new_i")
 test = test %>% left_join(temp)
-#test = test[-c(413, 414, 2305, 2306, 3934, 3935),]
+test = test %>% dplyr::select(-wkt_old)
 ```
-## for problem 5
 
-```{r}
-dt %>% group_by(i) %>% slice(1) %>% arrange(as.numeric(i))
-```
 
 ```{r}
 my.predict = function(B, newdata) {
