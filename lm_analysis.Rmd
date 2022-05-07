@@ -1,0 +1,66 @@
+---
+title: "lm_analysis"
+author: "Waveley Qiu (wq2162)"
+date: "2022-05-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("shared_code/data_cleaning.R")
+
+load("generated_data/B_final.RData")
+load("generated_data/mu_final.RData")
+```
+
+## LMs for all hurricanes
+
+```{r}
+new_train <- train %>% group_by(i) %>% mutate(new_i = cur_group_id())
+new_test <- test %>% group_by(i) %>% mutate(new_i = cur_group_id())
+new_full_dat <- dt %>% group_by(i) %>% mutate(new_i = cur_group_id())
+
+mu_ws_coefs <- lm(wkt_new ~ wkt_cur + d_lat + d_log + d_wkt, data = new_full_dat) %>% coef()
+
+examined_dt <- new_full_dat %>% filter(new_i == 602)
+
+all_coefs <- rep(NA, 6)
+
+for (j in 1:max(new_full_dat$new_i)) {
+  cur_hur <- new_full_dat %>% filter(new_i == j)
+  
+  cur_lm <- lm(wkt_new ~ wkt_cur + d_lat + d_log + d_wkt, data = cur_hur)
+  cur_lm_coefs <- c(cur_hur$new_i %>% mean(), cur_lm %>% coef())
+  
+  all_coefs <- rbind(all_coefs, cur_lm_coefs)
+}
+
+B_ws_coefs <- all_coefs[-1,]
+
+par(mfrow = c(2, 5))
+B_ws_coefs[,2] %>% hist(breaks = 100, main = "LM Beta0")
+abline(v = mu_ws_coefs[1], col = "red")
+B_ws_coefs[,3] %>% hist(breaks = 100, main = "LM Beta1")
+abline(v = mu_ws_coefs[2], col = "red")
+B_ws_coefs[,4] %>% hist(breaks = 100, main = "LM Beta2")
+abline(v = mu_ws_coefs[3], col = "red")
+B_ws_coefs[,5] %>% hist(breaks = 100, main = "LM Beta3")
+abline(v = mu_ws_coefs[4], col = "red")
+B_ws_coefs[,6] %>% hist(breaks = 100, main = "LM Beta4")
+abline(v = mu_ws_coefs[5], col = "red")
+
+
+B_final[,1] %>% hist(breaks = 100, main = "MCMC Beta0")
+abline(v = mu_final[1], col = "red")
+B_final[,2] %>% hist(breaks = 100, main = "MCMC Beta1")
+abline(v = mu_final[2], col = "red")
+B_final[,3] %>% hist(breaks = 100, main = "MCMC Beta2")
+abline(v = mu_final[3], col = "red")
+B_final[,4] %>% hist(breaks = 100, main = "MCMC Beta3")
+abline(v = mu_final[4], col = "red")
+B_final[,5] %>% hist(breaks = 100, main = "MCMC Beta4")
+abline(v = mu_final[5], col = "red")
+```
