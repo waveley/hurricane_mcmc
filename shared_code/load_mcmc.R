@@ -10,8 +10,8 @@ load("generated_data/mcmc_split3.RData")
 load("generated_data/mcmc_split4.RData")
 load("generated_data/mcmc_split5.RData")
 
-burn <- 500
-chain_length <- 1000
+burn <- 5000
+chain_length <- 10000
 
 B_list <- c(res1[[1]], 
             res2[[1]], 
