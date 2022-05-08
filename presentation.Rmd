@@ -101,19 +101,20 @@ library(tidyverse)
 - Optimization methods may vary from models to models, while we only need to derive posterior conditional distribution for each coefficients when using Gibbs Sampling.
   
   
-  
 ### Limitation
 
-- MCMC approaches are often computationally expensive since they involve thousands of rounds of sampling and updating.
+- MCMC approaches are often computationally expensive and can be inefficient since they involve thousands of rounds of sampling and updating.
 
+- Convergence is not guaranteed.
 
 ## Why Non-convergence?
 
 - $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong assumption
 
-- Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane 
+![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
 
-![]("plots/discussion.png")
 
-- red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset
+- **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
+
+
 
