@@ -14,7 +14,7 @@ library(ModelMetrics)
 
 ```{r}
 source("shared_code/data_cleaning.R")
-load("generated_data/B_final.RData")
+
 temp = distinct(test, i) %>% add_rownames("new_i")
 test = test %>% left_join(temp)
 test = test %>% dplyr::select(-wkt_old)
@@ -37,10 +37,88 @@ my.predict = function(B, newdata) {
 
 
 ```{r}
-pred = my.predict(B_final, test)
-rmse(pred, test$wkt_new)
+#approximate CI
+
+load("mcmc1.RData")
+
+n_hur <- 678
+length = 5000
+total = 10000
+
+B_est = data.frame()
+B_low = data.frame()
+B_up = data.frame()
+
+for (i in 1:n_hur) {
+  for (j in 1:5) {
+    mean_vec = NA
+    for (k in 1:length) {
+      mean_vec = c(mean_vec, res$B[[total+k-length]][i,j])
+    }
+    
+    mean_vec = sort(mean_vec[-1])
+    
+    B_est[i,j] = mean(mean_vec)
+    B_low[i,j] = mean_vec[floor(length * 0.025)]
+    B_up[i,j] = mean_vec[ceiling(length * 0.975)]
+    
+  }
+}
+
+B_estimate = tibble(hurricane = distinct(dt, id),
+                  beta0 = paste0(round(B_est[,1], 2), "[", round(B_low[,1],2), ",", round(B_up[,1],2), "]"),
+                  beta1 = paste0(round(B_est[,2], 2), "[", round(B_low[,2],2), ",", round(B_up[,2],2), "]"),
+                  beta2 = paste0(round(B_est[,3], 2), "[", round(B_low[,3],2), ",", round(B_up[,3],2), "]"),
+                  beta3 = paste0(round(B_est[,4], 2), "[", round(B_low[,4],2), ",", round(B_up[,4],2), "]"),
+                  beta4 = paste0(round(B_est[,5], 2), "[", round(B_low[,5],2), ",", round(B_up[,5],2), "]"),)
+
+head(B_estimate, 10)
+
+```
+
+```{r}
+mu_est = NA
+mu_low = NA
+mu_up = NA
+
+for (j in 1:5) {
+  mu_vec = NA
+  for (k in 1:length) {
+    mu_vec[k] = res$mu[[total+k-length]][j]
+  }
+  mu_vec = sort(mu_vec)
+  mu_est[j] = mean(mu_vec)
+  mu_low[j] = mu_vec[floor(length * 0.025)]
+  mu_up[j] = mu_vec[ceiling(length * 0.975)]
+}
+
+mu_estimate = tibble(mu0 = paste0(round(mu_est[1], 2), "[", round(mu_low[1], 2), ",", round(mu_up[1],2), "]"),
+                     mu1 = paste0(round(mu_est[2], 2), "[", round(mu_low[2], 2), ",", round(mu_up[2],2), "]"),
+                     mu2 = paste0(round(mu_est[3], 2), "[", round(mu_low[3], 2), ",", round(mu_up[3],2), "]"),
+                     mu3 = paste0(round(mu_est[4], 2), "[", round(mu_low[4], 2), ",", round(mu_up[4],2), "]"),
+                     mu4 = paste0(round(mu_est[5], 2), "[", round(mu_low[5], 2), ",", round(mu_up[5],2), "]"))
+
+mu_estimate
+```
+
+```{r}
+sigma_vec = sort(res$sigmasq[5001:10000])
+
+sigmasq_mean = mean(sigma_vec)
+sigmasq_low = sigma_vec[floor(length * 0.025)]
+sigmasq_up = sigma_vec[ceiling(length * 0.975)]
+```
+
+```{r}
+
 ```
 
 
+```{r}
+pred = my.predict(B_est, test)
+rmse(pred, test$wkt_new)
 
+#sqrt(mean((pred - test$wkt_new)^2))
+
+```
 
