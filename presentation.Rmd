@@ -41,7 +41,7 @@ $$
 
 where $Y_{i}(t)$ is the wind speed at time \textit{t}, $\Delta_{i, 1}(t)$,  $\Delta_{i, 2}(t)$, $\Delta_{i, 3}(t)$ are the changes in latitude, longitude, and wind speed between times $t$ and $t-6$, $\varepsilon_{i}(t)$ is the random error associated with each $Y_{i}(t+6)$
 
-We want to estimate the random coefficients, $\beta_i = (\beta_{1, i}, \beta_{2, i}, \beta_{3, i}. \beta_{4, i})$, for each hurricane. 
+We want to estimate the random coefficients, $\beta_i = (\beta_{0, i}, \beta_{1, i}, \beta_{2, i}, \beta_{3, i}. \beta_{4, i})$, for each hurricane. 
 
 ## Assumed Prior Distributions
 
@@ -54,7 +54,7 @@ The prior distributions for each of these parameters are assumed to be as follow
      &P\left(\Sigma^{-1}\right) \propto|\Sigma|^{-(d+1)} \exp \left(-\frac{1}{2} tr(\Sigma^{-1})\right),
         \\
      &\quad\quad\text{ where $d$ is the dimension of $\beta_i$}\\
-     &\beta_{i} \sim N(\mu, \Sigma)\\
+     &\beta_{i} \sim MVN(\mu, \Sigma)\\
 \end{align*}
 
 ## Goals
