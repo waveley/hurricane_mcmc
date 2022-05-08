@@ -46,6 +46,22 @@ library(tidyverse)
 \end{spacing} 
 \end{addmargin}
 
+## Results
+
+![]("plots/beta.png")
+
+## Results
+
+![]("plots/mu.png")
+
+## Results
+
+![]("plots/sigmasq.png")
+
+\vspace{5mm}
+
+![]("plots/SIGMA2.png")
+
 ## Discussion
 
 ### Strength
