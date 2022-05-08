@@ -14,6 +14,7 @@ header-includes:
   - \usepackage{setspace}
   - \usepackage{scrextend}
   - \usepackage{caption}
+  - \usepackage{graphicx}
   - \captionsetup[figure]{labelformat=empty}
 ---
 
@@ -97,28 +98,64 @@ The prior distributions for each of these parameters are assumed to be as follow
     \State Sample $\mathbf B_i \sim \pi(\mathbf B|\boldsymbol{\mu}_{i-1}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
     \State Sample $\boldsymbol \mu_i \sim \pi(\boldsymbol \mu|\mathbf{B}_{i}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
     \State Sample $\sigma_i^2 \sim \pi(\sigma^2|\mathbf{B}_{i}, \boldsymbol \mu_i, \Sigma_{i-1}, \mathbf Y) $
-    \State Sample $\Sigma_i \sim \pi(\Sigma|\mathbf{B}_{i}, \boldsymbol \mu_i, \sigma_i^2, \mathbf Y) $
+    \State Sample $\Sigma_i^{-1} \sim \pi(\Sigma^{-1}|\mathbf{B}_{i}, \boldsymbol \mu_i, \sigma_i^2, \mathbf Y) $
+    \State \indent take inverse
 \EndFor
 \end{algorithmic}
 \normalsize
 \end{spacing} 
 \end{addmargin}
 
-## Results
+## Convergence Plots and Distributions of $\mathbf B$
 
 ![]("plots/beta.png")
 
-## Results
+## Convergence Plots and Distributions of $\boldsymbol \mu$
 
 ![]("plots/mu.png")
 
-## Results
+##  Convergence Plots and Distributions of $\sigma^2$ and $\Sigma^{-1}$
 
 ![]("plots/sigmasq.png")
 
 \vspace{5mm}
 
 ![]("plots/SIGMA2.png")
+
+
+## Estimates for $\mathbf B$ and $\boldsymbol \mu$
+
+![]("plots/B_estimates.png")
+
+![]("plots/mu_estimates.png")
+
+
+## Estimates for $\sigma^2$ and $\Sigma^{-1}$
+
+\indent $\sigma^2 = 27.36[26.76, 27.98]$
+
+\vspace{5mm}
+
+$\Sigma^{-1}:$
+
+![]("plots/SIGMAinv_estimates.png")
+
+
+## Prediction Performance
+
+![]("plots/pred.png")
+
+## Prediction Performance
+
+\small
+\indent RMSE = 5.78
+\normalsize
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width = 3cm]{"plots/RMSE_table.png"}\hfill
+\includegraphics[width = 6cm]{"plots/RMSE.png"}\hfill
+\end{figure}
 
 ## EDA of $\beta_i$
 ![]("plots/p5_1.png")
