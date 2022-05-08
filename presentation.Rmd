@@ -22,7 +22,7 @@ library(tidyverse)
 
 ## Introduction
 
-### Data Praparation
+### Data Preparation
 
 - Self-join was performed to generate data for Gibbs sampling
 
