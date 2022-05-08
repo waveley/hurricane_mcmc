@@ -227,10 +227,10 @@ $\Sigma^{-1}:$
 \includegraphics[width = 6cm]{"plots/RMSE.png"}\hfill
 \end{figure}
 
-## EDA of $\beta_i$
+## $\beta_i$ Estimates by Starting Month
 ![]("plots/p5_1.png")
 
-## EDA of $\beta_i$
+## $\beta_i$ Estimates by Year
 ![]("plots/p5_2.png")
 
 ## Seasonal Analysis
