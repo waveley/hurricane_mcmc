@@ -102,9 +102,15 @@ Coefficients of Model 2 for $\beta_{i}$
 
 ## LASSO Model for Damage
 
+
+\centering
 ![]("plots/LASSO_coefficients.png"){height=300}
 
 ## Refitted Linear Regression Model
+
+Model:  Y = $\gamma_0$ + $\gamma_1$ x season + $\gamma_2$ x maxspeed + $\gamma_3$ x total\_pop + $\gamma_4$ x percent\_usa 
+
+\vspace{5mm}
 
 ![]("plots/refitted_linearmodel.png"){height=150}
 
