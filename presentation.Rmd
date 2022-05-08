@@ -22,11 +22,27 @@ library(tidyverse)
 
 ## Introduction
 
-### Data Preparation
+## Data 
 
-- Self-join was performed to generate data for Gibbs sampling
+**ID**: ID of hurricanes
 
-- For each hurricane, 80%/20% of records were randomly assigned to the training/test dataset. Hurricanes with less than 5 records were removed.
+**Year**: In which the hurricane occurred
+
+**Month**: In which the hurricane occurred
+
+**Nature**: Nature of the hurricane
+
+- ET: Extra Tropical
+- DS: Disturbance
+- NR: Not Rated
+- SS: Sub Tropical
+- TS: Tropical Storm
+
+**Time**: dates and time of the record
+
+**Latitude** and **Longitude**: The location of a hurricane check point
+
+**Wind.kt**: Maximum wind speed (in Knot) at each check point
 
 ## Gibbs Sampling
 
