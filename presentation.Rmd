@@ -102,7 +102,11 @@ Coefficients of Model 2 for $\beta_{i}$
 
 ## LASSO Model for Damage
 
+
+\centering
 ![]("plots/LASSO_coefficients.png"){height=300}
+
+
 
 ## Refitted Linear Regression Model
 
