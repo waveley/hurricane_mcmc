@@ -76,3 +76,14 @@ library(tidyverse)
 
 - MCMC approaches are often computationally expensive since they involve thousands of rounds of sampling and updating.
 
+
+## Why Non-convergence?
+
+- $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong assumption
+
+- Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane 
+
+![]("plots/discussion.png")
+
+- red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset
+
