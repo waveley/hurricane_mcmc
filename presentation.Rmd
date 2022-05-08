@@ -76,7 +76,7 @@ library(tidyverse)
 **Maxpressure**: Maximum recorded central pressure of the hurricane\
 **Meanpressure**: Average central pressure of the hurricane\
 **Hours**: Duration of the hurricane in hours\
-**Total.Pop**:  Total affected population\ 
+**Total.Pop**:  Total affected population\
 **Percent.Poor**: \% affected population that reside in low GDP counties\
 **Percent.USA**:  \% affected population that reside in the United States 
 
