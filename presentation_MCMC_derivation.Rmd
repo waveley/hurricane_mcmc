@@ -1,0 +1,91 @@
+---
+title: |
+  | P8160 - Bayesian Modeling of Hurricane Trajectories
+author: |
+  | Paulina Han, Waveley Qiu, Yida Wang,
+  | Lin Yang, Jibei Zheng, Haolin Zhong
+date: "2022-05-09"
+output:
+  beamer_presentation:
+    colortheme: "dolphin"
+header-includes:
+  - \usepackage{algpseudocode}
+  - \usepackage{amsmath}
+  - \usepackage{setspace}
+  - \usepackage{scrextend}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+## MCMC for Hierarchical Bayesian Model:Data Partition
+**Data Partition**
+
+- For each hurricane, 80% of records were randomly assigned to the training set and the remaining 20% were assigned to testing set. 
+
+- Hurricanes with less than 7 records were removed: at least 5 observations are included in the training set and 1 observation is included in the testing set.
+
+## MCMC for Hierarchical Bayesian Model: Method
+**Distribution Derivation:**
+
+- Gibbs sampler is used to generate random variables from given distribution:
+
+- Let $\Theta = (\boldsymbol B^{T}, \boldsymbol \beta^{T}, \boldsymbol \sigma^{2}, \boldsymbol \Sigma)$, the posterior distribution can be written as:
+
+$$
+\begin{aligned}
+P(\Theta \mid Y) &\propto f(Y | \Theta)P(\Theta) \\
+&= f(Y \mid \boldsymbol B, \boldsymbol \beta, \sigma^2, \boldsymbol \Sigma) 
+f(\boldsymbol B \mid \boldsymbol \beta, \boldsymbol \Sigma)P(\boldsymbol \beta) P(\sigma^2) P(\boldsymbol \Sigma^{-1})
+\end{aligned}
+$$
+
+## MCMC for Hierarchical Bayesian Model: Method
+**Conditional Distribution of $\Theta$:**
+
+- $Y_i \sim MVN( X_i\beta_i^T , \sigma^2 I_{n_i})$ , where $n_{i}$ is the number of observation of the $i^{th}$ hurricane.
+
+$$
+\begin{aligned}
+ f(Y \mid \boldsymbol B, \boldsymbol \beta, \sigma^2, \boldsymbol \Sigma) &= \prod_{i = 1}^N f(Y_i | B, \beta, \Sigma, \sigma^2)\\
+ &= \prod_{i=1}^N(2\pi)^{-\frac{n_i}{2}} \left| \sigma^2I_{n_i} \right|^{-\frac{1}{2}}\exp(-\frac{1}{2}(Y_i - X_i \beta_i^T)^T ( \sigma^2 I_{n_i})^{-1}(Y_i - X_i \beta_i^T)) \\
+\end{aligned}
+$$
+
+- $\beta_i \sim \text{MVN}(\mu, \Sigma)$:
+
+$$
+\begin{aligned}
+    f(B | \beta, \Sigma) &= \prod_{i=1}^N (2 \pi)^{-\frac{5}{2}} \left| \sigma \right|^{-\frac{1}{2}} \exp\left( -\frac{1}{2} (\beta_i - \mu)^T \Sigma^{-1} (\beta_i - \mu)\right)
+\end{aligned}
+$$
+
+
+## MCMC for Hierarchical Bayesian Model: Method
+**Conditional Distribution of $\Theta$:**
+
+- the posterior distribution of $\Theta$, where $A = \Sigma^{-1}$ :
+
+$$
+\begin{aligned}
+ P(\Theta \mid Y) \propto & \\
+ & \sigma^{-\sum_{i=1}^N n_i - 2}|A|^{d + \frac{N}{2}+1} \\
+ & \exp\left[-\frac{1}{2}\sum_{i=1}^N \left[(Y_i - X_i\beta_i^T)^T(\sigma^2I_{n_i})^{-1}(Y_i - X_i\beta_i^T) + (\beta_i - \mu)^T A(\beta_i - \mu)\right]\right. \\ 
+ & \left. -\frac{1}{2} tr(A) \right] \\
+\end{aligned}
+$$
+
+
+## MCMC for Hierarchical Bayesian Model: Method
+**Conditional Distribution of each parameter:**
+
+- $\beta_i \sim MVN(V^{-1}M,V^{-1})$ where,$V = \Sigma^{-1} + X_{i}^{T}\sigma^{-2}I_{ni}X_i$, $R = Y_{i}^{T}\sigma^{-2}I_{ni}Y_i + \mu^{T}\Sigma^{-1}\mu$,$M = Y_{i}^{T}\sigma^{-2}I_{ni}X_i + \mu^{T}\Sigma^{-1}$
+ 
+- $\mu \sim MVN(V^{-1}M, V^{-1})$, $V = N\Sigma^{-1}$, $R = \sum_{i=1}^N \beta_{i}^{T}\Sigma^{-1}\beta_{i}$, $M = \sum_{i=1}^N \Sigma^{-1}\beta_{i}$
+
+- $W \sim \text{inverse Gamma}(\frac{\sum_{i=1}^N n_i}{2}, \frac{1}{2}\sum_{i=1}^N \sum_{t=1}^{n_i}(y_{it} - x_{it}\beta_i^T)^2)$ , $W = \sigma^2$
+
+- $A \sim \text{Wishart}\left(3d + N + 3, \,\, (I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T)^{-1}\right)$, $A = \Sigma^{-1}$
