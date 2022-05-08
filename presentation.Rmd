@@ -66,6 +66,9 @@ The prior distributions for each of these parameters are assumed to be as follow
     a. Seasonal changes in any of the coefficients
 
     b. Predictive influence of these coefficients on forecasting hurricane impact. 
+    
+
+# MCMC
 
 ## Data 
 
@@ -229,9 +232,7 @@ $\Sigma^{-1}:$
 \includegraphics[width = 6cm]{"plots/RMSE.png"}\hfill
 \end{figure}
 
-## Season Analysis
-
-
+# Seasonal Analysis
 
 ## $\beta_i$ Estimates by Starting Month
 ![]("plots/p5_1.png")
@@ -256,9 +257,9 @@ N: ET, NR, SS, TS (reference: DS)
 Coefficients of Model 2 for $\beta_{i}$
 ![]("plots/p5_3.png")
 
+# Forecasting Hurricane Impact
 
-
-## Forcasting Hurricane Impact
+## Forecasting Hurricane Impact
 
 **ID**: ID of the hurricanes\
 **Season**: In which year the hurricane occurred\
@@ -276,7 +277,6 @@ Coefficients of Model 2 for $\beta_{i}$
 **Percent.USA**:  \% affected population that reside in the United States 
 
 ## LASSO Model for Damage
-
 
 \centering
 ![]("plots/LASSO_coefficients.png"){height=300}
@@ -318,6 +318,8 @@ Model: $log(\lambda_i) = \boldsymbol{X_i^{T}\boldsymbol{\gamma}} + log(hours_i)$
 ![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
 
 - **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
+
+# Thank you!!
 
 ## References
 

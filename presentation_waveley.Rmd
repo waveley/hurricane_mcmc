@@ -21,3 +21,9 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
+
+\title{Seasonal Analysis}
+\subtitle{}
+\author{}
+\date{}
+\maketitle
