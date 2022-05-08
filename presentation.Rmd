@@ -26,7 +26,7 @@ library(tidyverse)
 
 - Self-join was performed to generate data for Gibbs sampling
 
-- For each hurricane, 80% record was randomly selected and assigned to the train dataset, and the rest are in the test dataset. Hurricanes with less than 5 records were removed.
+- For each hurricane, 80%/20% of records were randomly assigned to the training/test dataset. Hurricanes with less than 5 records were removed.
 
 ## Gibbs Sampling
 
