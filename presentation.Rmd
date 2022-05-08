@@ -51,13 +51,15 @@ The prior distributions for each of these parameters are assumed to be as follow
      &\epsilon_{i}(t) \sim N(0, \sigma^{2}) , \text{ which are independent across $t$}\\
      &P\left(\sigma^{2}\right) \propto \frac{1}{\sigma^{2}}\\
      &P(\boldsymbol{\mu}) \propto 1\\
-     &P\left(\Sigma^{-1}\right) \propto|\Sigma|^{-(d+1)} \exp \left(-\frac{1}{2} \Sigma^{-1}\right),\text{ where $d$ is the dimension of $\beta_i$}\\
+     &P\left(\Sigma^{-1}\right) \propto|\Sigma|^{-(d+1)} \exp \left(-\frac{1}{2} tr(\Sigma^{-1})\right),
+        \\
+     &\quad\quad\text{ where $d$ is the dimension of $\beta_i$}\\
      &\beta_{i} \sim N(\mu, \Sigma)\\
 \end{align*}
 
 ## Goals
 
-1. Construct an MCMC algorithm from which we can sample from a posterior distribution to estimate $\Theta = (\bf{B}, \bf{\mu}, \sigma^2, \Sigma)$.
+1. Construct an MCMC algorithm from which we can sample from a posterior distribution to estimate $\Theta = (\bf{B}, \bf{\mu}, \sigma^2,$ $\Sigma)$.
 
 2. Conduct analysis using estimated parameters to understand their properties.
 
@@ -289,7 +291,7 @@ Model:  Y = $\gamma_0$ + $\gamma_1$ x season + $\gamma_2$ x maxspeed + $\gamma_3
 
 ## Poisson Model for Deaths
 
-$y_i$ ~ Poisson($\mu_i$), where $\mu_i = hours_i * \lambda_i$, $\lambda_i$ is the number of deaths per hour\
+$Y_i$ ~ Poisson($\mu_i$), where $\mu_i = hours_i * \lambda_i$, $\lambda_i$ is the number of deaths per hour\
 Model: $log(\lambda_i) = \boldsymbol{X_i^{T}\boldsymbol{\gamma}} + log(hours_i)$
 ![]("plots/Poisson_coefficients.png"){height=250}
 
