@@ -15,7 +15,7 @@ library(MASS)
 
 ## Data Preparation
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 load("generated_data/B_final.RData")
 source("shared_code/data_cleaning.R")
 id <- train$id %>% unique()
@@ -38,8 +38,6 @@ dat6 <- read.csv("data/hurricanoutcome2.csv") %>%
   rename(id = hurrican_id)
 
 dat6new <- left_join(dat6, B_reg, by = "id") %>% dplyr::select(-1)
-
-dat6new$nature
 ```
 
 ## Model for Damage
