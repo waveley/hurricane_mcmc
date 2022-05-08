@@ -118,25 +118,25 @@ Coefficients of Model 2 for $\beta_{i}$
 
 ## Discussion
 
-### Strength
+### Strength & Limitation of MCMC methods
 
-- Unlike classical modeling methods, the MCMC approach bypass coefficient optimization process and directly sample coefficients from their distributions
-  
-- Optimization methods may vary from models to models, while we only need to derive posterior conditional distribution for each coefficients when using Gibbs Sampling.
-  
-  
-### Limitation
+\vskip 10pt
 
-- MCMC approaches are often computationally expensive and can be inefficient since they involve thousands of rounds of sampling and updating.
+- Bypass coefficient optimization process and directly sample coefficients from their assumed distributions
 
-- Convergence is not guaranteed.
+\vskip 10pt
+
+- Often computationally expensive and can be inefficient
+
+\vskip 10pt
+
+- Convergence is not guaranteed
 
 ## Why Non-convergence?
 
 - $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong assumption
 
 ![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
-
 
 - **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
 
