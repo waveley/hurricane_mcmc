@@ -13,6 +13,8 @@ header-includes:
   - \usepackage{amsmath}
   - \usepackage{setspace}
   - \usepackage{scrextend}
+  - \usepackage{caption}
+  - \captionsetup[figure]{labelformat=empty}
 ---
 
 ```{r setup, include=FALSE}
@@ -20,7 +22,47 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Introduction
+## Hurricane Ida
+
+![From: Livingston, I., \textit{The Washington Post}, 2021](images/ida_impact.png)
+
+## Saffir-Simpson Wind Scale
+
+![From: \textit{NHC NOAA}](images/hurricane_scale.png)
+
+## Proposed Hierarchical Bayesian Model
+
+The following hierarchical Bayesian model was proposed to predict the wind speed of the $i^{th}$ hurricane at time $t+6$:
+
+$$
+ Y_{i}(t+6)=\beta_{0, i}+\beta_{1, i} Y_{i}(t)+\beta_{2, i} \Delta_{i, 1}(t)+\beta_{3, i} \Delta_{i, 2}(t)+\beta_{4, i} \Delta_{i, 3}(t)+\varepsilon_{i}(t),   
+$$
+
+where $Y_{i}(t)$ is the wind speed at time \textit{t}, $\Delta_{i, 1}(t)$,  $\Delta_{i, 2}(t)$, $\Delta_{i, 3}(t)$ are the changes in latitude, longitude, and wind speed between times $t$ and $t-6$, $\varepsilon_{i}(t)$ is the random error associated with each $Y_{i}(t+6)$
+
+We want to estimate the random coefficients, $\beta_i = (\beta_{1, i}, \beta_{2, i}, \beta_{3, i}. \beta_{4, i})$, for each hurricane. 
+
+## Assumed Prior Distributions
+
+The prior distributions for each of these parameters are assumed to be as follows: 
+
+\begin{align*}
+     &\epsilon_{i}(t) \sim N(0, \sigma^{2}) , \text{ which are independent across $t$}\\
+     &P\left(\sigma^{2}\right) \propto \frac{1}{\sigma^{2}}\\
+     &P(\boldsymbol{\mu}) \propto 1\\
+     &P\left(\Sigma^{-1}\right) \propto|\Sigma|^{-(d+1)} \exp \left(-\frac{1}{2} \Sigma^{-1}\right),\text{ where $d$ is the dimension of $\beta_i$}\\
+     &\beta_{i} \sim N(\mu, \Sigma)\\
+\end{align*}
+
+## Goals
+
+1. Construct an MCMC algorithm from which we can sample from a posterior distribution to estimate $\Theta = (\bf{B}, \bf{\mu}, \sigma^2, \Sigma)$.
+
+2. Conduct analysis using estimated parameters to understand their properties.
+
+    a. Seasonal changes in any of the coefficients
+
+    b. Predictive influence of these coefficients on forecasting hurricane impact. 
 
 ## Data 
 
@@ -152,11 +194,16 @@ Model:  Y = $\gamma_0$ + $\gamma_1$ x season + $\gamma_2$ x maxspeed + $\gamma_3
 
 ## Why Non-convergence?
 
-- $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong assumption
+- $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong of an assumption
 
 ![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
 
 - **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
 
+## References
+
+1. Livingston, I. (2021, September 3). Ida's impact from the Gulf Coast to northeast - by the numbers. The Washington Post. https://www.washingtonpost.com/weather/2021/09/03/hurricane-ida-numbers-surge-wind-pressure-damage/ 
+
+2. Saffir-Simpson Hurricane Wind Scale. (n.d.). https://www.nhc.noaa.gov/aboutsshws.php 
 
 

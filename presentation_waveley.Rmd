@@ -1,0 +1,23 @@
+---
+title: |
+  | P8160 - Bayesian Modeling of Hurricane Trajectories
+author: |
+  | Paulina Han, Waveley Qiu, Yida Wang,
+  | Lin Yang, Jibei Zheng, Haolin Zhong
+date: "2022-05-09"
+output:
+  beamer_presentation:
+    colortheme: "dolphin"
+header-includes:
+  - \usepackage{algpseudocode}
+  - \usepackage{amsmath}
+  - \usepackage{setspace}
+  - \usepackage{scrextend}
+  - \usepackage{caption}
+  - \captionsetup[figure]{labelformat=empty}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
