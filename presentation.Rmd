@@ -227,6 +227,10 @@ $\Sigma^{-1}:$
 \includegraphics[width = 6cm]{"plots/RMSE.png"}\hfill
 \end{figure}
 
+## Season Analysis
+
+
+
 ## $\beta_i$ Estimates by Starting Month
 ![]("plots/p5_1.png")
 
@@ -236,16 +240,16 @@ $\Sigma^{-1}:$
 ## Seasonal Analysis
 
 Model 1: $\beta_{i} = \alpha_{0} + \alpha_{1m}I(\textrm{Month} = M ) + \alpha_{2}\times \textrm{Year} + \alpha_{3n}I(\textrm{Type} = N )$\
-M: April-December  
-N: ET, NR, SS, TS
+M: April-December (reference: January)   
+N: ET, NR, SS, TS (reference: DS)
 
 Coefficients of Model 1 for $\beta_{i}$
 ![]("plots/p5_4.png")
 
 ## Seasonal Analysis
 Model 2: $Beta_{i} = \alpha_{0} + \alpha_{1s}I(\textrm{Season} = S ) + \alpha_{2}\times \textrm{Year} + \alpha_{3n}I(\textrm{Type} = N )$\
-S: Spring, Summer, Winter  
-N: ET, NR, SS, TS  
+S: Spring, Summer, Winter (reference: Fall)  
+N: ET, NR, SS, TS (reference: DS)
 
 Coefficients of Model 2 for $\beta_{i}$
 ![]("plots/p5_3.png")
