@@ -130,7 +130,7 @@ Model:  Y = $\gamma_0$ + $\gamma_1$ x season + $\gamma_2$ x maxspeed + $\gamma_3
 
 ![]("plots/refitted_linearmodel.png"){height=150}
 
-## Poisson Model for Dealths
+## Poisson Model for Deaths
 
 ![]("plots/Poisson_coefficients.png"){height=300}
 
