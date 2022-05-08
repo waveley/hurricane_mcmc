@@ -62,6 +62,36 @@ library(tidyverse)
 
 ![]("plots/SIGMA2.png")
 
+
+## Forcasting Hurricane Impact
+
+**ID**: ID of the hurricanes\
+**Season**: In which year the hurricane occurred\
+**Month**: In which month the hurricane occurred\
+**Nature**: Nature of the hurricane\
+**Damage**: Financial loss (in Billion U.S. dollars) caused by hurricanes\
+**Deaths**: Number of death caused by hurricanes\
+**Maxspeed**: Maximum recorded wind speed of the hurricane\
+**Meanspeed**: Average wind speed of the hurricane\
+**Maxpressure**: Maximum recorded central pressure of the hurricane\
+**Meanpressure**: Average central pressure of the hurricane\
+**Hours**: Duration of the hurricane in hours\
+**Total.Pop**:  Total affected population\
+**Percent.Poor**: \% affected population that reside in low GDP counties\
+**Percent.USA**:  \% affected population that reside in the United States 
+
+## LASSO Model for Damage
+
+![]("plots/LASSO_coefficients.png")
+
+## Refitted Linear Regression Model
+
+![]("plots/refitted_linearmodel.png")
+
+## Poisson Model for Dealths
+
+![]("plots/Poisson_coefficients.png")
+
 ## Discussion
 
 ### Strength
@@ -71,8 +101,20 @@ library(tidyverse)
 - Optimization methods may vary from models to models, while we only need to derive posterior conditional distribution for each coefficients when using Gibbs Sampling.
   
   
-  
 ### Limitation
 
-- MCMC approaches are often computationally expensive since they involve thousands of rounds of sampling and updating.
+- MCMC approaches are often computationally expensive and can be inefficient since they involve thousands of rounds of sampling and updating.
+
+- Convergence is not guaranteed.
+
+## Why Non-convergence?
+
+- $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong assumption
+
+![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
+
+
+- **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
+
+
 
