@@ -62,9 +62,24 @@ library(tidyverse)
 
 ![]("plots/SIGMA2.png")
 
+## EDA of $\beta_i$
+![]("plots/p5_1.png")
 
+## EDA of $\beta_i$
+![]("plots/p5_2.png")
 
+## Seasonal Analysis
 
+Model 1: $Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Month} = M ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$ 
+
+Coefficients of Model 1 for $\beta_{i}$
+![]("plots/p5_4.png")
+
+## Seasonal Analysis
+Model 2: $Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Season} = S ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$ 
+
+Coefficients of Model 2 for $\beta_{i}$
+![]("plots/p5_3.png")
 
 
 
