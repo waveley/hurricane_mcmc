@@ -8,6 +8,11 @@ date: "2022-05-09"
 output:
   beamer_presentation:
     colortheme: "dolphin"
+header-includes:
+  - \usepackage{algpseudocode}
+  - \usepackage{amsmath}
+  - \usepackage{setspace}
+  - \usepackage{scrextend}
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +27,24 @@ library(tidyverse)
 - Self-join was performed to generate data for Gibbs sampling
 
 - For each hurricane, 80% record was randomly selected and assigned to the train dataset, and the rest are in the test dataset. Hurricanes with less than 5 records were removed.
+
+## Gibbs Sampling
+
+\begin{addmargin}[2em]{1em}
+\begin{spacing}{1.5}
+\Large
+\begin{algorithmic}
+\State Initialize $\Theta_0 = ( \mathbf B_0, \boldsymbol{\mu}_0, \sigma_0^2, \Sigma_0) $
+\For{iteration i = 1,2,...} 
+    \State Sample $\mathbf B_i \sim \pi(\mathbf B|\boldsymbol{\mu}_{i-1}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\boldsymbol \mu_i \sim \pi(\boldsymbol \mu|\mathbf{B}_{i}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\sigma_i^2 \sim \pi(\sigma^2|\mathbf{B}_{i}, \boldsymbol \mu_i, \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\Sigma_i \sim \pi(\Sigma|\mathbf{B}_{i}, \boldsymbol \mu_i, \sigma_i^2, \mathbf Y) $
+\EndFor
+\end{algorithmic}
+\normalsize
+\end{spacing} 
+\end{addmargin}
 
 ## Discussion
 
