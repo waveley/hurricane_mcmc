@@ -1,0 +1,40 @@
+---
+title: |
+  | P8160 - p5
+author: |
+  | Paulina Han, Waveley Qiu, Yida Wang,
+  | Lin Yang, Jibei Zheng, Haolin Zhong
+date: "2022-05-09"
+output:
+  beamer_presentation:
+    colortheme: "dolphin"
+header-includes:
+  - \usepackage{algpseudocode}
+  - \usepackage{amsmath}
+  - \usepackage{setspace}
+  - \usepackage{scrextend}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## EDA of Beta
+![]("plots/p5_1.png")
+
+## EDA of Beta
+![]("plots/p5_2.png")
+
+## Seasonal Analysis
+\begin{addmargin}[2em]{1em}
+\begin{spacing}{1.5}
+\Large
+\begin{algorithmic}
+\State Model 1 $$Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Month} = M ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$$ 
+## Seasonal Analysis
+\begin{addmargin}[2em]{1em}
+\begin{spacing}{1.5}
+\Large
+\begin{algorithmic}
+\State Model 2 $$Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Season} = S ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$$
