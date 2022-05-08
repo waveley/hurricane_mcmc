@@ -232,13 +232,17 @@ $\Sigma^{-1}:$
 
 ## Seasonal Analysis
 
-Model 1: $Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Month} = M ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$ 
+Model 1: $\beta_{i} = \alpha_{0} + \alpha_{1m}I(\textrm{Month} = M ) + \alpha_{2}\times \textrm{Year} + \alpha_{3n}I(\textrm{Type} = N )$\
+M: April-December  
+N: ET, NR, SS, TS
 
 Coefficients of Model 1 for $\beta_{i}$
 ![]("plots/p5_4.png")
 
 ## Seasonal Analysis
-Model 2: $Beta_{i} = \alpha_{0} + \alpha_{1}I(\textrm{Season} = S ) + \alpha_{2}\times \textrm{Year} + \alpha_{3}I(\textrm{Type} = N )$ 
+Model 2: $Beta_{i} = \alpha_{0} + \alpha_{1s}I(\textrm{Season} = S ) + \alpha_{2}\times \textrm{Year} + \alpha_{3n}I(\textrm{Type} = N )$\
+S: Spring, Summer, Winter  
+N: ET, NR, SS, TS  
 
 Coefficients of Model 2 for $\beta_{i}$
 ![]("plots/p5_3.png")
