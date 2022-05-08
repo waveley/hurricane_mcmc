@@ -174,7 +174,9 @@ Model:  Y = $\gamma_0$ + $\gamma_1$ x season + $\gamma_2$ x maxspeed + $\gamma_3
 
 ## Poisson Model for Deaths
 
-![]("plots/Poisson_coefficients.png"){height=300}
+$y_i$ ~ Poisson($\mu_i$), where $\mu_i = hours_i * \lambda_i$, $\lambda_i$ is the number of deaths per hour\
+Model: $log(\lambda_i) = \boldsymbol{X_i^{T}\boldsymbol{\gamma}} + log(hours_i)$
+![]("plots/Poisson_coefficients.png"){height=250}
 
 ## Discussion
 
