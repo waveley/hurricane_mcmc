@@ -13,22 +13,21 @@ library(caret)
 library(MASS)
 ```
 
+## Data Preparation
 
 ```{r}
 load("generated_data/B_final.RData")
 source("shared_code/data_cleaning.R")
 id <- train$id %>% unique()
-B_final %>% dim()
 
 B_reg <- tibble(
   id = id,
-  b0 = B_final[,1], 
-  b1 = B_final[,2],
-  b2 = B_final[,3],
-  b3 = B_final[,4],
-  b4 = B_final[,5]
-)
-B_reg <- B_reg %>% mutate(id = tolower(id))
+  beta0 = B_final[,1], 
+  beta1 = B_final[,2],
+  beta2 = B_final[,3],
+  beta3 = B_final[,4],
+  beta4 = B_final[,5]
+) %>% mutate(id = tolower(id))
 
 dat6 <- read.csv("data/hurricanoutcome2.csv") %>% 
   janitor::clean_names() %>% 
@@ -39,10 +38,13 @@ dat6 <- read.csv("data/hurricanoutcome2.csv") %>%
   rename(id = hurrican_id)
 
 dat6new <- left_join(dat6, B_reg, by = "id") %>% dplyr::select(-1)
+
+dat6new$nature
 ```
 
+## Model for Damage
 
-```{r}
+```{r, dpi=300, warning=FALSE}
 #damage
 damage_x <- model.matrix(damage ~ ., dat6new)[ ,-1]
 damage_y <- dat6new$damage
@@ -62,50 +64,37 @@ coef(damage.fit$finalModel, damage.fit$bestTune$lambda) %>%
   knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
 
 #refit a linear regression model
-damage.lm <- lm(damage ~ season + maxspeed + total_pop + percent_usa + b2, data = dat6new)
-summary(damage.lm)
-
-fit <- lm(damage ~., data = dat6)
-summary(fit)
+damage.lm <- lm(damage ~ season + maxspeed + total_pop + percent_usa, data = dat6new)
+summary(damage.lm)$coefficient[, 1] %>%
+  knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
 ```
 
+## Model for Deaths
 
 ```{r}
-#deaths
-#quantile(dat6$deaths, 0.95)
-#dat_death <- dat6 %>% filter(deaths <= 1000)
-#boxplot(dat6$deaths)
-#summary(dat_death)
 death_x <- model.matrix(deaths ~ ., dat6new)[ ,-1]
 death_y <- dat6new$deaths
 
-set.seed(100)
-death.fit <- train(deaths ~ season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+meanpressure+total_pop+percent_poor+percent_usa+b0+b1+b2+b3+b4+ offset(hours),
-                   data = dat6new,
-                   method = "glmnet",
-                   family = "poisson",
-                   preProcess = "scale",
-                   tuneGrid = expand.grid(alpha = 1, 
-                                          lambda = exp(seq(-4, 5, length = 500))),
-                   trControl = ctrl)
-plot(death.fit)
-death.fit$bestTune
-coef(death.fit$finalModel, death.fit$bestTune$lambda) %>% 
-  as.matrix() %>% 
-  knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
+death.fit <- glm(deaths ~ season + damage + month + nature + maxspeed + meanspeed + maxpressure + meanpressure + total_pop + percent_poor + percent_usa + beta0 + beta1 + beta2 + beta3 + beta4 + offset(log(hours)), 
+                 family = poisson(link = log), data = dat6new)
+
+summary(death.fit)$coefficients %>% knitr::kable()
 
 
-poi_fit = glm(deaths ~ season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+meanpressure+total_pop+percent_poor+percent_usa+b0+b1+b2+b3+b4+offset(log(hours)), family = poisson(link=log), data = dat6)
-summary(poi_fit)
-
-#wave.nb=glm.nb(deaths ~season+damage+deaths+month+nature+maxspeed+meanspeed+maxpressure+mea#npressure+total_pop+percent_poor+percent_usa+ offset(log(hours)), data = dat6)
-#summary(wave.nb)
-#sqrt(sum((predict(wave.nb, newdata = dat6) - dat6$deaths)^2))
-
-
-
-#sqrt(sum((predict(poi_fit, newdata = dat6) - dat6$deaths)^2))
-#summary(dat6$deaths)
+#set.seed(100)
+#death.fit <- train(deaths ~ season + damage + month + nature + maxspeed + maxpressure + #meanpressure + total_pop + percent_poor + percent_usa + beta0 + beta1 + beta2 + beta3 + #beta4 + offset(log(hours)),
+#                   data = dat6new,
+#                   method = "glmnet",
+#                   family = "poisson",
+#                   preProcess = "scale",
+#                   tuneGrid = expand.grid(alpha = seq(0, 1, length = 21), 
+#                                          lambda = exp(seq(-4, 4, length = 200))),
+#                   trControl = ctrl)
+#plot(death.fit)
+#death.fit$bestTune
+#coef(death.fit$finalModel, death.fit$bestTune$lambda) %>% 
+#  as.matrix() %>% 
+#  knitr::kable(col.names = gsub("[.]", " ", "Coefficients"))
 ```
 
 
