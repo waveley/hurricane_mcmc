@@ -82,15 +82,15 @@ library(tidyverse)
 
 ## LASSO Model for Damage
 
-![]("plots/LASSO_coefficients.png")
+![]("plots/LASSO_coefficients.png"){height=300}
 
 ## Refitted Linear Regression Model
 
-![]("plots/refitted_linearmodel.png")
+![]("plots/refitted_linearmodel.png"){height=150}
 
 ## Poisson Model for Dealths
 
-![]("plots/Poisson_coefficients.png")
+![]("plots/Poisson_coefficients.png"){height=300}
 
 ## Discussion
 
