@@ -121,7 +121,7 @@ $$
 
 $$
 \begin{aligned}
- f(Y \mid \boldsymbol B, \boldsymbol \beta, \sigma^2, \boldsymbol \Sigma) &= \prod_{i = 1}^N f(Y_i | B, \beta, \Sigma, \sigma^2)\\
+ f(Y \mid \boldsymbol B, \boldsymbol \mu, \sigma^2, \boldsymbol \Sigma) &= \prod_{i = 1}^N f(Y_i | B, \mu, \Sigma, \sigma^2)\\
  &= \prod_{i=1}^N(2\pi)^{-\frac{n_i}{2}} \left| \sigma^2I_{n_i} \right|^{-\frac{1}{2}}\exp(-\frac{1}{2}(Y_i - X_i \beta_i^T)^T ( \sigma^2 I_{n_i})^{-1}(Y_i - X_i \beta_i^T)) \\
 \end{aligned}
 $$
@@ -130,7 +130,7 @@ $$
 
 $$
 \begin{aligned}
-    f(B | \beta, \Sigma) &= \prod_{i=1}^N (2 \pi)^{-\frac{5}{2}} \left| \sigma \right|^{-\frac{1}{2}} \exp\left( -\frac{1}{2} (\beta_i - \mu)^T \Sigma^{-1} (\beta_i - \mu)\right)
+    f(B | \mu, \Sigma) &= \prod_{i=1}^N (2 \pi)^{-\frac{5}{2}} \left| \sigma \right|^{-\frac{1}{2}} \exp\left( -\frac{1}{2} (\beta_i - \mu)^T \Sigma^{-1} (\beta_i - \mu)\right)
 \end{aligned}
 $$
 
@@ -313,9 +313,9 @@ Model: $log(\lambda_i) = \boldsymbol{X_i^{T}\boldsymbol{\gamma}} + log(hours_i)$
 
 ## Why Non-convergence?
 
-- $\boldsymbol \beta_i \sim N(\boldsymbol \beta, \Sigma)$ may be a too strong of an assumption
+- $\boldsymbol \beta_i \sim N(\boldsymbol \mu, \Sigma)$ may be a too strong of an assumption
 
-![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \beta$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
+![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \mu$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
 
 - **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
 
