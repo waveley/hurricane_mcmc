@@ -104,13 +104,13 @@ The prior distributions for each of these parameters are assumed to be as follow
 
 - Gibbs sampler is used to generate random variables from given distribution:
 
-- Let $\Theta = (\boldsymbol B^{T}, \boldsymbol \beta^{T}, \boldsymbol \sigma^{2}, \boldsymbol \Sigma)$, the posterior distribution can be written as:
+- Let $\Theta = (\boldsymbol B^{T}, \boldsymbol \mu^{T}, \boldsymbol \sigma^{2}, \boldsymbol \Sigma)$, the posterior distribution can be written as:
 
 $$
 \begin{aligned}
 P(\Theta \mid Y) &\propto f(Y | \Theta)P(\Theta) \\
-&= f(Y \mid \boldsymbol B, \boldsymbol \beta, \sigma^2, \boldsymbol \Sigma) 
-f(\boldsymbol B \mid \boldsymbol \beta, \boldsymbol \Sigma)P(\boldsymbol \beta) P(\sigma^2) P(\boldsymbol \Sigma^{-1})
+&= f(Y \mid \boldsymbol B, \boldsymbol \mu, \sigma^2, \boldsymbol \Sigma) 
+f(\boldsymbol B \mid \boldsymbol \mu, \boldsymbol \Sigma)P(\boldsymbol \mu) P(\sigma^2) P(\boldsymbol \Sigma^{-1})
 \end{aligned}
 $$
 
