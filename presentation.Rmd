@@ -48,18 +48,19 @@ We want to estimate the random coefficients, $\beta_i = (\beta_{0, i}, \beta_{1,
 The prior distributions for each of these parameters are assumed to be as follows: 
 
 \begin{align*}
-     &\epsilon_{i}(t) \sim N(0, \sigma^{2}) , \text{ which are independent across $t$}\\
-     &P\left(\sigma^{2}\right) \propto \frac{1}{\sigma^{2}}\\
+     &\beta_{i} \sim MVN(\mu, \Sigma)\\
      &P(\boldsymbol{\mu}) \propto 1\\
      &P\left(\Sigma^{-1}\right) \propto|\Sigma|^{-(d+1)} \exp \left(-\frac{1}{2} tr(\Sigma^{-1})\right),
         \\
      &\quad\quad\text{ where $d$ is the dimension of $\beta_i$}\\
-     &\beta_{i} \sim MVN(\mu, \Sigma)\\
+     \\
+     &\epsilon_{i}(t) \sim N(0, \sigma^{2}) , \text{ which are independent across $t$}\\
+     &P\left(\sigma^{2}\right) \propto \frac{1}{\sigma^{2}}\\
 \end{align*}
 
 ## Goals
 
-1. Construct an MCMC algorithm from which we can sample from a posterior distribution to estimate $\Theta = (\bf{B}, \bf{\mu}, \sigma^2,$ $\Sigma)$.
+1. Construct an MCMC algorithm from which we can sample from a posterior distribution to estimate $\Theta = (\boldsymbol{B}^T, \boldsymbol{\mu}^T, \sigma^2,$ $\Sigma)$.
 
 2. Conduct analysis using estimated parameters to understand their properties.
 
