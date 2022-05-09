@@ -168,12 +168,12 @@ $$
 \begin{spacing}{1.5}
 \Large
 \begin{algorithmic}
-\State Initialize $\Theta_0 = ( \mathbf B_0, \boldsymbol{\mu}_0, \sigma_0^2, \Sigma_0) $
+\State Initialize $\Theta_0 = ( \mathbf B_0, \boldsymbol{\mu}_0, \sigma_0^2, \boldsymbol \Sigma_0) $
 \For{iteration i = 1,2,...} 
-    \State Sample $\mathbf B_i \sim \pi(\mathbf B|\boldsymbol{\mu}_{i-1}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
-    \State Sample $\boldsymbol \mu_i \sim \pi(\boldsymbol \mu|\mathbf{B}_{i}, \sigma_{i-1}^2, \Sigma_{i-1}, \mathbf Y) $
-    \State Sample $\sigma_i^2 \sim \pi(\sigma^2|\mathbf{B}_{i}, \boldsymbol \mu_i, \Sigma_{i-1}, \mathbf Y) $
-    \State Sample $\Sigma_i^{-1} \sim \pi(\Sigma^{-1}|\mathbf{B}_{i}, \boldsymbol \mu_i, \sigma_i^2, \mathbf Y) $
+    \State Sample $\mathbf B_i \sim \pi(\mathbf B|\boldsymbol{\mu}_{i-1}, \sigma_{i-1}^2, \boldsymbol \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\boldsymbol \mu_i \sim \pi(\boldsymbol \mu|\mathbf{B}_{i}, \sigma_{i-1}^2, \boldsymbol \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\sigma_i^2 \sim \pi(\sigma^2|\mathbf{B}_{i}, \boldsymbol \mu_i, \boldsymbol \Sigma_{i-1}, \mathbf Y) $
+    \State Sample $\boldsymbol \Sigma_i^{-1} \sim \pi(\boldsymbol \Sigma^{-1}|\mathbf{B}_{i}, \boldsymbol \mu_i, \sigma_i^2, \mathbf Y) $
     \State \indent take inverse
 \EndFor
 \end{algorithmic}
@@ -189,7 +189,7 @@ $$
 
 ![]("plots/mu.png")
 
-##  Convergence Plots and Distributions of $\sigma^2$ and $\Sigma^{-1}$
+##  Convergence Plots and Distributions of $\sigma^2$ and $\boldsymbol \Sigma^{-1}$
 
 ![]("plots/sigmasq.png")
 
@@ -219,18 +219,23 @@ $\Sigma^{-1}:$
 ## Prediction Performance
 
 ![]("plots/pred.png")
+\centering Predicted vs. observed values of windspeed 
 
 ## Prediction Performance
 
 \small
-\indent RMSE = 5.78
+\centering Overall RMSE = 5.78
 \normalsize
 
-\begin{figure}[!h]
+\begin{figure}
 \centering
-\includegraphics[width = 3cm]{"plots/RMSE_table.png"}\hfill
-\includegraphics[width = 6cm]{"plots/RMSE.png"}\hfill
+\includegraphics[width = 3.5cm]{"plots/RMSE_table.png"}\hfill
+\includegraphics[width = 7cm]{"plots/RMSE.png"}\hfill
+\vspace{8mm}
+\caption{RMSE table and density plot}
 \end{figure}
+
+
 
 # Seasonal Analysis
 
