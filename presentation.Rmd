@@ -158,9 +158,9 @@ $$
  
 - $\mu \sim MVN(V^{-1}M, V^{-1})$, where $V = N\Sigma^{-1}$, $M = \sum_{i=1}^N \Sigma^{-1}\beta_{i}$
 
-- $W \sim \text{inverse Gamma}(\frac{\sum_{i=1}^N n_i}{2}, \frac{1}{2}\sum_{i=1}^N \sum_{t=1}^{n_i}(y_{it} - x_{it}\beta_i^T)^2)$ , $W = \sigma^2$
+- $\sigma^2 \sim \text{inverse Gamma}(\frac{\sum_{i=1}^N n_i}{2}, \frac{1}{2}\sum_{i=1}^N \sum_{t=1}^{n_i}(y_{it} - x_{it}\beta_i^T)^2)$ 
 
-- $A \sim \text{Wishart}\left(3d + N + 3, \,\, (I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T)^{-1}\right)$, $A = \Sigma^{-1}$
+- $\Sigma^{-1} \sim \text{Wishart}\left(3d + N + 3, \,\, (I + \sum_{i=1}^N(\beta_i - \mu)(\beta_i - \mu)^T)^{-1}\right)$
 
 
 ## Gibbs Sampling
@@ -184,13 +184,19 @@ $$
 
 ## Convergence Plots and Distributions of $\mathbf B$
 
+- chain length: 10000; burn: 5000
+
 ![]("plots/beta.png")
 
 ## Convergence Plots and Distributions of $\boldsymbol \mu$
 
+- chain length: 10000; burn: 5000
+
 ![]("plots/mu.png")
 
 ##  Convergence Plots and Distributions of $\sigma^2$ and $\boldsymbol \Sigma^{-1}$
+
+- chain length: 10000; burn: 5000
 
 ![]("plots/sigmasq.png")
 
@@ -240,10 +246,10 @@ $\Sigma^{-1}:$
 
 # Seasonal Analysis
 
-## $\beta_i$ Estimates by Starting Month
+## $\hat{\beta_i}$ by Starting Month
 ![]("plots/p5_1.png")
 
-## $\beta_i$ Estimates by Year
+## $\hat{\beta_i}$ by Year
 ![]("plots/p5_2.png")
 
 ## Seasonal Analysis
@@ -319,11 +325,11 @@ Model: $log(\lambda_i) = \boldsymbol{X_i^{T}\boldsymbol{\gamma}} + log(hours_i)$
 
 ## Why Non-convergence?
 
-- $\boldsymbol \beta_i \sim N(\boldsymbol \mu, \Sigma)$ may be a too strong of an assumption
+- $\boldsymbol \beta_i \sim MVN(\boldsymbol \mu, \Sigma)$ may be a too strong of an assumption
 
 ![Distribution of $\boldsymbol \beta_i$s obtained by performing OLS for each hurricane (red line: $\boldsymbol \mu$ obtained by performing OLS on the whole training dataset)]("plots/discussion.png")
 
-- **Future work**: use a more adequate distribution assumption of $\boldsymbol \beta_i$ which can account for skewness
+- **Future work**: use a more adequate distributional assumption of $\boldsymbol \beta_i$ which can account for skewness
 
 # Thank you!!
 
